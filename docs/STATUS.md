@@ -5,7 +5,7 @@ the remote SHA below. Do not trust remembered state.
 
 | Milestone | Gate | Status | Commit (local) | Remote SHA verified | Evidence |
 |---|---|---|---|---|---|
-| M0 | recon + safe foundation | IN PROGRESS | — | — | docs/HOST_CAPABILITIES.md, results/host-capabilities.json |
+| M0 | recon + safe foundation | PASS | e2a9f8f→f79d8cf (amended) | f79d8cfd9b752ffe2007d71e066ea583821114a8 | docs/HOST_CAPABILITIES.md, results/host-capabilities.json, results/doctor-m0.json, results/milestones/M0.md |
 | M1 | exact graph engine | NOT STARTED | — | — | — |
 | M2 | search + witnesses | NOT STARTED | — | — | — |
 | M3 | Lean/mathlib bridge | NOT STARTED | — | — | — |
@@ -29,5 +29,5 @@ the remote SHA below. Do not trust remembered state.
 
 ## Remote
 
-- GitHub: private repo `Hardonian/GRAPH-Lab` (to be created at M0 close).
-- Latest verified remote SHA: (pending)
+- GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
+- Latest verified remote SHA: f79d8cfd9b752ffe2007d71e066ea583821114a8 (M0).
