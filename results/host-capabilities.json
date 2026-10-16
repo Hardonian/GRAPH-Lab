@@ -1,0 +1,62 @@
+{
+  "cpu": {
+    "model": "AMD EPYC 7452 32-Core Processor",
+    "threads": 64,
+    "sockets": 1,
+    "numa_nodes": 1,
+    "max_mhz": 3364
+  },
+  "memory_gib_total": 168,
+  "storage": {
+    "root_free_gib": 93,
+    "ai_storage_free_gib": 633,
+    "repo_on": "/mnt/ai-storage (NVMe)"
+  },
+  "os": "Ubuntu 26.04.1 LTS / kernel 7.0.0-38-generic",
+  "gpu": [
+    {
+      "smi_index": 0,
+      "name": "Tesla V100-SXM2-16GB",
+      "vram_mib": 16384,
+      "driver": "580.178.04",
+      "compute_cap": "7.0"
+    },
+    {
+      "smi_index": 1,
+      "name": "Tesla P40",
+      "vram_mib": 23040,
+      "driver": "580.178.04",
+      "compute_cap": "6.1"
+    },
+    {
+      "smi_index": 2,
+      "name": "NVIDIA GeForce RTX 3060",
+      "vram_mib": 12288,
+      "driver": "580.178.04",
+      "compute_cap": "8.6"
+    }
+  ],
+  "gpu_policy": "all three cards host production lanes; occupancy-gated use; CPU default and correctness oracle",
+  "toolchains": {
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "cargo": "cargo 1.99.1 (5f94df478 2026-08-27)",
+    "python": "Python 3.14.7",
+    "uv": "uv 0.11.21 (x86_64-unknown-linux-gnu)",
+    "git": "git version 2.53.0",
+    "gh": "gh version 2.102.0 (2026-09-30)\nhttps://github.com/cli/cli/releases/tag/v2.102.0",
+    "nvcc": "Build cuda_12.6.r12.6/compiler.35059454_0",
+    "lean": "not installed at recon (M3 installs via elan user-space)",
+    "z3": "not installed at recon"
+  },
+  "bench": {
+    "kernel": "LCG + popcount (enumeration inner-loop proxy)",
+    "single_thread_ops_per_s": 1173749,
+    "thread48_ops_per_s": 37333646,
+    "speedup_vs_single": 31.81,
+    "single_wall_s": 0.17,
+    "thread48_wall_s": 0.257,
+    "iterations_per_thread": 200000
+  },
+  "sanitized": true,
+  "collected_at": "2026-10-16"
+}

@@ -1,0 +1,22 @@
+/target
+**/*.rs.bk
+Cargo.lock.bak
+.env
+*.env
+secrets/
+__pycache__/
+*.pyc
+.venv/
+dist/
+build/
+.mypy_cache/
+.ruff_cache/
+.lean/
+/results/tmp/
+/results/**/*.lock
+node_modules/
+*.log
+.DS_Store
+# large derived data — regenerate via `graphlab search` / scripts/reproduce.sh
+/results/enumeration-*.jsonl.gz
+/results/**/raw-*.json

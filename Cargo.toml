@@ -1,0 +1,30 @@
+[workspace]
+resolver = "2"
+members = ["crates/graphlab-core", "crates/graphlab-cli"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.85"
+license = "MIT"
+repository = "https://github.com/Hardonian/GRAPH-Lab"
+
+[workspace.dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+graph6 = "2"
+hex = "0.4"
+indexmap = "2"
+num_cpus = "1"
+rand = "0.8"
+rand_chacha = "0.3"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+thiserror = "2"
+toml = "0.8"
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+panic = "abort"

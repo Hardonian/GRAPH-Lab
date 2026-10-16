@@ -1,0 +1,21 @@
+[package]
+name = "graphlab-cli"
+description = "graphlab — CLI for the GRAPH Lab engine"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "graphlab"
+path = "src/main.rs"
+
+[dependencies]
+anyhow = { workspace = true }
+clap = { workspace = true }
+graphlab-core = { path = "../graphlab-core" }
+hex = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
