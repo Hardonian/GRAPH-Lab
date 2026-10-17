@@ -4,7 +4,7 @@ Resume protocol: read this file, then `git log --oneline -20`, then verify
 the remote SHA below. Do not trust remembered state.
 
 | Milestone | Gate | Status | Commit (local) | Remote SHA verified | Evidence |
-|---|---|---|---|---|---|
+| --- | --- | --- | --- | --- | --- |
 | M0 | recon + safe foundation | PASS | e2a9f8f→f79d8cf (amended) | f79d8cfd9b752ffe2007d71e066ea583821114a8 | docs/HOST_CAPABILITIES.md, results/host-capabilities.json, results/doctor-m0.json, results/milestones/M0.md |
 | M1 | exact graph engine | PASS | f4bc65d | f4bc65d0cce40bf3a40e7e5adc5407d3f660bbc0 | results/milestones/M1.md, results/enumeration/crosscheck-m1.json |
 | M2 | search + witnesses | PASS | d2d085f | d2d085fe94a742cd66b368af2f4d4512d2543438 | results/milestones/M2.md, results/campaigns/* |
@@ -97,6 +97,5 @@ the remote SHA below. Do not trust remembered state.
 
 ## Remote
 
-- GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
-- Latest verified remote SHA: 1d20d4a510fb3437a53d265b173109eb98b9c9b0.
-
+- GitHub: [GRAPH-Lab](https://github.com/Hardonian/GRAPH-Lab) (PRIVATE), default branch main.
+- Latest verified remote SHA: 0c4c729b3ea0241dd2b325e208433b8568e8c57e.
