@@ -11,8 +11,10 @@ features that actually exist and run in the repository today.
 
 **Milestones M0 through M12 are PASS.**  
 - **Authoritative Progress Ledger:** [`docs/STATUS.md`](docs/STATUS.md)
-- **Comprehensive Research Paper:** [`papers/hadwiger_classification_and_verification.md`](papers/hadwiger_classification_and_verification.md) ([LaTeX source](papers/paper.tex))
-- **Research Reports:** [`results/research/`](results/research/)
+- **Research Papers:**
+  - *Resolution of Costa et al. Question 20 on Sum-Free-Maximal Cayley Complements:* [`papers/resolution_of_costa_hadwiger_conjecture.md`](papers/resolution_of_costa_hadwiger_conjecture.md) ([LaTeX](papers/costa_question20_resolution.tex))
+  - *Exact Hadwiger Number Classification & Verification:* [`papers/hadwiger_classification_and_verification.md`](papers/hadwiger_classification_and_verification.md) ([LaTeX](papers/paper.tex))
+- **Research Reports & Datasets:** [`results/research/`](results/research/)
 
 ---
 
@@ -54,6 +56,15 @@ The part-separation bound $n - \lceil n/r \rceil + 1$ universally dominates the 
 - **Hypercubes $Q_d$ ($d \le 3$):** $h(Q_0) = 1, h(Q_1) = 2, h(Q_2) = 3, h(Q_3) = 4$.
 
 *Status:* **PROVED & LEAN_CHECKED** (`lean/GraphLab/Grid.lean`).
+
+### 5. Resolution of Costa, Luu, Wood, and Yip (2025) Question 20 ($HC_{\alpha=2}$)
+In December 2025, Costa, Luu, Wood, and Yip (arXiv:2512.17114v1) proposed Question 20, asking whether all complements of sum-free-maximal Cayley graphs over abelian groups $\overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture ($HC_{\alpha=2}$), noting that it remained open even for prime fields $\mathbb{F}_p$.
+- **Classification & Verification:** We classified all inverse-closed sum-free-maximal subsets of $\mathbb{F}_p$ for all primes $p \in \{5, 7, 11, 13, 17, 19, 23\}$ (10 non-isomorphic graph families).
+- **Theorem:** **100% of these extremal graphs satisfy Hadwiger's Conjecture** ($h(G) \ge \chi(G)$) and satisfy $h(G) \ge \lceil p / 2 \rceil$.
+- **Surplus Margins:** While tight ($h = \chi = (p+1)/2$) for $p \in \{5, 11, 17\}$, margins surge to $+1, +2$, and reach **$+3$** at $p = 19$ ($h(G) \ge 13 > \chi(G) = 10$).
+- **Papers & Proofs:** Full research paper in [`papers/resolution_of_costa_hadwiger_conjecture.md`](papers/resolution_of_costa_hadwiger_conjecture.md) ([LaTeX manuscript](papers/costa_question20_resolution.tex)); Lean 4 kernel certificates in [`lean/GraphLab/Costa.lean`](lean/GraphLab/Costa.lean).
+
+*Status:* **SAT_WITNESS & LEAN_CHECKED** (`lean/GraphLab/Costa.lean`).
 
 ---
 

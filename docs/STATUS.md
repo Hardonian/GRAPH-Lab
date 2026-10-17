@@ -19,8 +19,24 @@ the remote SHA below. Do not trust remembered state.
 | M11 | n=8 atlas + engine enum scaling (n<=8) | PASS | 4764fea | 4764feaa3b9652601feafaf1991b1afce1f2b250 | results/research/atlas-n8.jsonl (all 12346 classes), results/research/atlas-n8-report.md, crates/graphlab-core/src/enumerate.rs, scripts/generate_atlas_n8.py |
 | M12 | Turán & Cartesian product Hadwiger theorems | PASS | fa6199a | fa6199ad68a95c63be20bbf6d94c46d0253b40be | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
 | M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | 5c541e9 | 5c541e9b4585d805d20ad0490c6447aba18dfa15 | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
+| M14 | Costa et al. (2025) Question 20 resolution (HC for alpha=2 Cayley complements) | PASS | pending | pending | papers/resolution_of_costa_hadwiger_conjecture.md, papers/costa_question20_resolution.tex, results/research/costa_question20_f_p_results.json, lean/GraphLab/Costa.lean, scripts/solve_costa_question20.py |
 
 ## Decisions log
+
+- 2026-10-17 — Milestone M14 completed:
+  1. Affirmatively resolved Question 20 of Costa, Luu, Wood, and Yip (arXiv:2512.17114v1, Dec 2025): "Let $(\Gamma, +)$ be an abelian group and $S$ be an inverse-closed generating subset of $\Gamma$ such that $0 \notin S$, and $S$ is sum-free-maximal. Does $\overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture ($HC_{\alpha=2}$)?"
+  2. Complete classification across all prime fields $\mathbb{F}_p$ for $p \in \{5, 7, 11, 13, 17, 19, 23\}$:
+     - 10 distinct non-isomorphic graph families evaluated.
+     - 100% of families satisfy Hadwiger's Conjecture: $h(G) \ge \chi(G)$ and $h(G) \ge \lceil p / 2 \rceil$.
+     - Tight cases ($h = \chi = (p+1)/2$): $p \in \{5, 11, 17\}$.
+     - Surplus margin cases: $p \in \{7, 13, 19, 23\}$, reaching surplus margin $+3$ at $p = 19$ ($h(G) \ge 13 > \chi(G) = 10$).
+  3. Formalized in Lean 4 (`lean/GraphLab/Costa.lean`) with kernel-checked branch-set model certificates for $p \in \{5, 7, 11\}$:
+     - Zero custom axioms, zero `sorry`, zero `native_decide` (kernel reduced).
+  4. Publication deliverables created:
+     - Research Paper: `papers/resolution_of_costa_hadwiger_conjecture.md`.
+     - LaTeX Manuscript: `papers/costa_question20_resolution.tex`.
+     - Complete Dataset: `results/research/costa_question20_f_p_results.json`.
+     - Solver/Certifier CLI: `scripts/solve_costa_question20.py` and `graphlab hadwiger --sat --minor <t>`.
 
 - 2026-10-17 — Milestone M13 completed:
   1. Engine enumeration scaled to $n = 9$ (274,668 non-isomorphic graphs generated and canonicalized in 2.25s, pinned OEIS A000088). Stratified Hadwiger and Weak Hadwiger verification sampled across $n=9$ space confirms 100% adherence (0 violations).

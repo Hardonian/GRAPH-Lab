@@ -7,3 +7,4 @@ import GraphLab.Apex
 import GraphLab.CompleteMultipartite
 import GraphLab.Turan
 import GraphLab.Grid
+import GraphLab.Costa

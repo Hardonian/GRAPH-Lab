@@ -65,6 +65,9 @@ enum Cmd {
         /// Use CDCL SAT minor solver (supports n > 10)
         #[arg(long)]
         sat: bool,
+        /// Search for a specific complete minor K_t instead of finding max h(G)
+        #[arg(long)]
+        minor: Option<usize>,
     },
     /// Run a campaign (TOML) over its declared domain
     Search {
@@ -354,8 +357,43 @@ fn main() -> Result<()> {
             println!("{re}");
             Ok(())
         }
-        Cmd::Hadwiger { input, json, sat } => {
+        Cmd::Hadwiger {
+            input,
+            json,
+            sat,
+            minor,
+        } => {
             let g = parse_graph_input(&input)?;
+            if let Some(t) = minor {
+                let model = if sat || g.num_vertices() > graphlab_core::hadwiger::HADWIGER_MAX_N {
+                    match graphlab_core::hadwiger_sat::find_branch_model_sat(&g, t) {
+                        Ok(m) => m,
+                        Err(e) => {
+                            eprintln!("graphlab hadwiger (minor query sat): {e}");
+                            std::process::exit(7);
+                        }
+                    }
+                } else {
+                    graphlab_core::hadwiger::find_branch_model(&g, t)
+                };
+                let has = model.is_some();
+                if json {
+                    let v = serde_json::json!({
+                        "graph6": g6::encode_graph6(&g),
+                        "target_minor": t,
+                        "has_minor": has,
+                        "branch_model": model,
+                        "chi": graphlab_core::invariants::chromatic_number(&g),
+                        "n": g.num_vertices(),
+                        "m": g.edge_count(),
+                    });
+                    println!("{}", serde_json::to_string_pretty(&v)?);
+                } else {
+                    println!("{has}");
+                }
+                return Ok(());
+            }
+
             let (h, model) = if sat || g.num_vertices() > graphlab_core::hadwiger::HADWIGER_MAX_N {
                 let h = match graphlab_core::hadwiger_sat::hadwiger_number_sat(&g) {
                     Ok(h) => h,
