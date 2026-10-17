@@ -209,15 +209,9 @@ impl Graph {
             for j in 0..b {
                 let u = i * b + j;
                 let next_j = (j + 1) % b;
-                let v_j = i * b + next_j;
-                if u < v_j {
-                    g.add_edge(u, v_j)?;
-                }
+                g.add_edge(u, i * b + next_j)?;
                 let next_i = (i + 1) % a;
-                let v_i = next_i * b + j;
-                if u < v_i {
-                    g.add_edge(u, v_i)?;
-                }
+                g.add_edge(u, next_i * b + j)?;
             }
         }
         Ok(g)

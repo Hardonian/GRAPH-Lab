@@ -100,4 +100,21 @@ theorem Hypercube_3_model : validBranchModel 8 4 (HypercubeA 3) 367030 = true :=
 theorem Hypercube_3_h4 : hasKMinor 8 4 (HypercubeA 3) = true :=
   hasKMinor_of_model 8 4 (HypercubeA 3) 367030 (by decide) Hypercube_3_model (by decide)
 
+/-- Torus Grid graph adjacency matrix C_a □ C_b on a * b vertices (where a, b >= 3). -/
+def TorusGridA (a b : Nat) : Matrix := fun u v =>
+  let nu := a * b
+  decide (u < nu && v < nu && u ≠ v &&
+    ((u / b == v / b && ((u % b + 1) % b == v % b || (v % b + 1) % b == u % b)) ||
+     (u % b == v % b && ((u / b + 1) % a == v / b || (v / b + 1) % a == u / b))))
+
+theorem TorusGridA_irrefl (a b : Nat) : ∀ i : Nat, TorusGridA a b i i = false := by
+  intro i
+  unfold TorusGridA
+  simp
+
+-- C_3 □ C_3: n = 9, h = 5 (Torus Grid)
+theorem TorusGrid_3_3_model : validBranchModel 9 5 (TorusGridA 3 3) 9676411 = true := by decide
+theorem TorusGrid_3_3_h5 : hasKMinor 9 5 (TorusGridA 3 3) = true :=
+  hasKMinor_of_model 9 5 (TorusGridA 3 3) 9676411 (by decide) TorusGrid_3_3_model (by decide)
+
 end GraphLab
