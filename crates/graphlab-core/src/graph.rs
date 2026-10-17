@@ -235,6 +235,107 @@ impl Graph {
         Ok(g)
     }
 
+    /// Petersen graph on 10 vertices and 15 edges.
+    pub fn petersen() -> Result<Self, GraphError> {
+        let mut e = Vec::with_capacity(15);
+        for i in 0..5 {
+            e.push((i, (i + 1) % 5));
+            e.push((i, 5 + i));
+            e.push((5 + i, 5 + (i + 2) % 5));
+        }
+        Self::from_edges(10, &e)
+    }
+
+    /// Cycle graph C_n on n vertices (n >= 3).
+    pub fn cycle(n: usize) -> Result<Self, GraphError> {
+        if n < 3 {
+            return Err(GraphError::InvalidVertexCount(n as i64));
+        }
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        for i in 0..n {
+            g.add_edge(i, (i + 1) % n)?;
+        }
+        Ok(g)
+    }
+
+    /// Mycielskian M(G) of graph G.
+    /// Has 2n + 1 vertices: original vertices 0..n, shadow vertices n..2n, apex vertex 2n.
+    pub fn mycielskian(&self) -> Result<Self, GraphError> {
+        let n = self.n;
+        let new_n = 2 * n + 1;
+        if new_n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(new_n));
+        }
+        let mut g = Self::empty(new_n)?;
+        for u in 0..n {
+            for v in (u + 1)..n {
+                if self.has_edge(u, v) {
+                    g.add_edge(u, v)?;
+                    g.add_edge(n + u, v)?;
+                    g.add_edge(u, n + v)?;
+                }
+            }
+            g.add_edge(2 * n, n + u)?;
+        }
+        Ok(g)
+    }
+
+    /// Grötzsch graph: smallest triangle-free graph with chromatic number 4 (n = 11, m = 20).
+    /// Constructed as the Mycielskian of the 5-cycle M(C_5).
+    pub fn groetzsch() -> Result<Self, GraphError> {
+        Self::cycle(5)?.mycielskian()
+    }
+
+    /// Chvátal graph: smallest triangle-free 4-regular graph with chromatic number 4 (n = 12, m = 24).
+    pub fn chvatal() -> Result<Self, GraphError> {
+        const EDGES: [(usize, usize); 24] = [
+            (0, 1),
+            (0, 4),
+            (0, 6),
+            (0, 9),
+            (1, 2),
+            (1, 5),
+            (1, 7),
+            (2, 3),
+            (2, 6),
+            (2, 8),
+            (3, 4),
+            (3, 7),
+            (3, 9),
+            (4, 5),
+            (4, 8),
+            (5, 10),
+            (5, 11),
+            (6, 10),
+            (6, 11),
+            (7, 8),
+            (7, 11),
+            (8, 10),
+            (9, 10),
+            (9, 11),
+        ];
+        Self::from_edges(12, &EDGES)
+    }
+
+    /// Clebsch graph (Greenwood-Gleason graph): triangle-free 5-regular graph on 16 vertices (n = 16, m = 40).
+    /// Constructed as the folded 5-cube where u ~ v iff popcount(u ^ v) in {1, 4}.
+    pub fn clebsch() -> Result<Self, GraphError> {
+        let n = 16;
+        let mut g = Self::empty(n)?;
+        for u in 0..n {
+            for v in (u + 1)..n {
+                let diff = (u ^ v).count_ones();
+                if diff == 1 || diff == 4 {
+                    g.add_edge(u, v)?;
+                }
+            }
+        }
+        Ok(g)
+    }
+
     /// Apex graph G * K_1: adds a universal vertex adjacent to all existing vertices.
     pub fn apex(&self) -> Result<Self, GraphError> {
         let n = self.n;

@@ -431,11 +431,11 @@ pub fn check_branch_model(g: &Graph, assign: &[usize], t: usize) -> bool {
     if t == 0 {
         return false;
     }
-    if t > 16 {
+    if t > 64 {
         return false;
     }
-    let mut part_masks = [0u64; 16];
-    let mut part_neighbors = [0u64; 16];
+    let mut part_masks = vec![0u64; t];
+    let mut part_neighbors = vec![0u64; t];
 
     for (v, &p) in assign.iter().enumerate() {
         if p != DELETED {
