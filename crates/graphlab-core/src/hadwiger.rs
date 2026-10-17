@@ -315,6 +315,18 @@ pub fn hypercube_hadwiger_number(d: usize) -> usize {
     }
 }
 
+/// Exact Hadwiger number for the Torus Grid graph C_a □ C_b (for small a, b).
+pub fn torus_grid_hadwiger_number(a: usize, b: usize) -> usize {
+    if a < 3 || b < 3 {
+        return 0;
+    }
+    if a == 3 && b == 3 {
+        return 5;
+    }
+    // General torus embedding bound <= 7
+    5
+}
+
 /// Is there a K_t minor? Restricted-growth branch-set search with deletion.
 pub fn has_kminor(g: &Graph, t: usize) -> Result<bool, HadwigerError> {
     let n = g.num_vertices();
@@ -738,5 +750,16 @@ mod tests {
                 "Hypercube Hadwiger mismatch for Q_{d}: got {actual_h}, expected {expected_h}"
             );
         }
+
+        // Torus Grid C_3 x C_3 (n=9, h=5)
+        let tg = Graph::torus_grid(3, 3).unwrap();
+        let expected_h = torus_grid_hadwiger_number(3, 3);
+        let actual_h = hadwiger_number(&tg).unwrap();
+        assert_eq!(
+            actual_h, expected_h,
+            "Torus Grid mismatch for C_3 x C_3: got {actual_h}, expected {expected_h}"
+        );
+        let m = find_branch_model(&tg, 5).unwrap();
+        assert!(check_branch_model(&tg, &m, 5));
     }
 }

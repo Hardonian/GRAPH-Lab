@@ -19,7 +19,7 @@ use crate::g6::encode_graph6;
 use crate::graph::Graph;
 
 /// Inductive unlabeled enumeration capped at EXHAUSTIVE_MAX_N.
-pub const EXHAUSTIVE_MAX_N: usize = 8;
+pub const EXHAUSTIVE_MAX_N: usize = 9;
 
 #[derive(Debug, thiserror::Error)]
 pub enum EnumError {
@@ -68,28 +68,16 @@ pub fn enumerate_unlabeled(n: usize) -> Result<Vec<Graph>, EnumError> {
         let mut seen = std::collections::HashSet::new();
         let mut next = Vec::new();
         for (key, h) in candidates {
-            if seen.insert(key) {
-                next.push(h);
+            if seen.insert(key.clone()) {
+                next.push((key, h));
             }
         }
-        current = next;
+        next.sort_by(|(ka, a), (kb, b)| {
+            a.edge_count().cmp(&b.edge_count()).then_with(|| ka.cmp(kb))
+        });
+        current = next.into_iter().map(|(_, h)| h).collect();
     }
 
-    current.sort_by(|a, b| {
-        a.edge_count().cmp(&b.edge_count()).then_with(|| {
-            let ka = if n <= 6 {
-                canon::canonical_bytes(a).unwrap()
-            } else {
-                canon::nauty_canonical_bytes(a).unwrap()
-            };
-            let kb = if n <= 6 {
-                canon::canonical_bytes(b).unwrap()
-            } else {
-                canon::nauty_canonical_bytes(b).unwrap()
-            };
-            ka.cmp(&kb)
-        })
-    });
     Ok(current)
 }
 
@@ -114,9 +102,9 @@ pub fn enumerate_labeled_upto(n: usize) -> Vec<String> {
         .collect()
 }
 
-/// Known unlabeled counts n = 0..=8 (A000088). Hard-coded reference, not
+/// Known unlabeled counts n = 0..=9 (A000088). Hard-coded reference, not
 /// computed — tests compare the engine against these.
-pub const KNOWN_UNLABELED_COUNTS: [usize; 9] = [1, 1, 2, 4, 11, 34, 156, 1044, 12346];
+pub const KNOWN_UNLABELED_COUNTS: [usize; 10] = [1, 1, 2, 4, 11, 34, 156, 1044, 12346, 274668];
 
 #[cfg(test)]
 mod tests {
@@ -125,7 +113,7 @@ mod tests {
 
     #[test]
     fn unlabeled_counts_match_known_sequence() {
-        for (n, &expected) in KNOWN_UNLABELED_COUNTS.iter().enumerate() {
+        for (n, &expected) in KNOWN_UNLABELED_COUNTS.iter().take(9).enumerate() {
             let gs = enumerate_unlabeled(n).unwrap();
             assert_eq!(
                 gs.len(),
@@ -137,10 +125,16 @@ mod tests {
     }
 
     #[test]
+    fn unlabeled_count_n9_pinned() {
+        let gs = enumerate_unlabeled(9).unwrap();
+        assert_eq!(gs.len(), KNOWN_UNLABELED_COUNTS[9]);
+    }
+
+    #[test]
     fn refuses_above_cap() {
         assert!(matches!(
-            enumerate_unlabeled(9),
-            Err(EnumError::TooLarge(9))
+            enumerate_unlabeled(10),
+            Err(EnumError::TooLarge(10))
         ));
     }
 

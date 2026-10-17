@@ -193,6 +193,36 @@ impl Graph {
         Ok(g)
     }
 
+    /// Torus Grid graph C_a □ C_b on a * b vertices (Cartesian product of cycles C_a and C_b, where a, b >= 3).
+    pub fn torus_grid(a: usize, b: usize) -> Result<Self, GraphError> {
+        if a < 3 || b < 3 {
+            return Err(GraphError::InvalidVertexCount(a.min(b) as i64));
+        }
+        let n = a
+            .checked_mul(b)
+            .ok_or(GraphError::TooManyVertices(usize::MAX))?;
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        for i in 0..a {
+            for j in 0..b {
+                let u = i * b + j;
+                let next_j = (j + 1) % b;
+                let v_j = i * b + next_j;
+                if u < v_j {
+                    g.add_edge(u, v_j)?;
+                }
+                let next_i = (i + 1) % a;
+                let v_i = next_i * b + j;
+                if u < v_i {
+                    g.add_edge(u, v_i)?;
+                }
+            }
+        }
+        Ok(g)
+    }
+
     /// Hypercube graph Q_d on 2^d vertices (Hamming cube of dimension d).
     pub fn hypercube(d: usize) -> Result<Self, GraphError> {
         if d > 6 {

@@ -24,7 +24,7 @@ fn doctor_json_parses() {
     let o = args(&["doctor", "--json"]);
     assert!(o.status.success(), "{:?}", o);
     let v: serde_json::Value = serde_json::from_slice(&o.stdout).unwrap();
-    assert_eq!(v["exhaustive_enum_max_n"], 8);
+    assert_eq!(v["exhaustive_enum_max_n"], 9);
 }
 
 #[test]
@@ -39,8 +39,8 @@ fn enumerate_all_levels_succeed_and_n7_is_1044_lines() {
 }
 
 #[test]
-fn enumerate_n9_fails_loudly_exit3() {
-    let o = args(&["enumerate", "--vertices", "9"]);
+fn enumerate_n10_fails_loudly_exit3() {
+    let o = args(&["enumerate", "--vertices", "10"]);
     assert_eq!(o.status.code(), Some(3), "{:?}", o);
     let e = String::from_utf8_lossy(&o.stderr);
     assert!(
