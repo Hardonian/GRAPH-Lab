@@ -70,6 +70,9 @@ def main() -> int:
     violations = []
     for f in files:
         raw = f.read_text()
+        if len(raw.strip()) == 0:
+            violations.append(f"{f.relative_to(REPO)}: EMPTY tracked source file (silent build replay hazard)")
+            continue
         code = strip_comments(raw)
         for i, line in enumerate(code.splitlines(), 1):
             for pat, name in FORBIDDEN:
