@@ -334,6 +334,7 @@ dependencies = [
  "clap",
  "graphlab-core",
  "hex",
+ "rayon",
  "serde",
  "serde_json",
  "sha2",

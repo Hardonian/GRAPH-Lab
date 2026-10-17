@@ -4,6 +4,8 @@
 //! Unimplemented commands (search/minimize/verify/formalize/verify-lean/
 //! benchmark) arrive in later milestones — they are NOT listed until they run.
 
+mod bench;
+
 use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
 use graphlab_core::{canon, enumerate, g6, invariants};
@@ -82,6 +84,16 @@ enum Cmd {
     Verify {
         #[arg(long)]
         witness: String,
+    },
+    /// CPU/GPU benchmarks: raw JSON to stdout or --output file
+    Benchmark {
+        #[arg(long, default_value_t = 48)]
+        threads: usize,
+        /// probe GPU suitability (occupancy gate) without launching work
+        #[arg(long)]
+        gpu_if_capable: bool,
+        #[arg(long)]
+        output: Option<String>,
     },
 }
 
@@ -429,7 +441,69 @@ fn main() -> Result<()> {
                 }
             }
         }
+        Cmd::Benchmark {
+            threads,
+            gpu_if_capable,
+            output,
+        } => {
+            let mut report = serde_json::json!({
+                "cpu": {
+                    "threads": threads,
+                    "benches": [
+                        bench::bench_enumerate_invariants(threads, 3),
+                        bench::bench_labeled_sweep(threads),
+                        bench::bench_hadwiger(threads),
+                    ],
+                },
+                "gpu": {"probed": gpu_if_capable, "used": false},
+            });
+            if gpu_if_capable {
+                let occ = gpu_occupancy();
+                report["gpu"]["occupancy_percent"] = serde_json::json!(occ);
+                report["gpu"]["decision"] = serde_json::json!(
+                    if occ.iter().any(|(_, p)| *p > 10) {
+                        "skipped: occupancy >10% on one or more cards (production lanes active); CPU-only run is authoritative"
+                    } else {
+                        "cards look idle; no CUDA kernel is wired yet — GPU remains unused (see docs/GPU_FINDINGS.md)"
+                    }
+                );
+            }
+            let body = serde_json::to_string_pretty(&report)?;
+            match output {
+                Some(p) => {
+                    if let Some(dir) = std::path::Path::new(&p).parent() {
+                        std::fs::create_dir_all(dir)?;
+                    }
+                    std::fs::write(&p, &body)?;
+                    eprintln!("bench written to {p}");
+                }
+                None => println!("{body}"),
+            }
+            Ok(())
+        }
     }
+}
+
+/// query nvidia-smi utilization.gpu per card; None if unavailable
+fn gpu_occupancy() -> Vec<(String, u32)> {
+    let Ok(out) = std::process::Command::new("nvidia-smi")
+        .args([
+            "--query-gpu=name,utilization.gpu",
+            "--format=csv,noheader,nounits",
+        ])
+        .output()
+    else {
+        return Vec::new();
+    };
+    String::from_utf8_lossy(&out.stdout)
+        .lines()
+        .filter_map(|l| {
+            let mut parts = l.splitn(2, ',');
+            let name = parts.next()?.trim().to_string();
+            let pct: u32 = parts.next()?.trim().parse().ok()?;
+            Some((name, pct))
+        })
+        .collect()
 }
 
 /// Load the first non-manifest, non-rejected witness line from a JSONL file.

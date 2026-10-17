@@ -8,8 +8,8 @@ the remote SHA below. Do not trust remembered state.
 | M0 | recon + safe foundation | PASS | e2a9f8f→f79d8cf (amended) | f79d8cfd9b752ffe2007d71e066ea583821114a8 | docs/HOST_CAPABILITIES.md, results/host-capabilities.json, results/doctor-m0.json, results/milestones/M0.md |
 | M1 | exact graph engine | PASS | f4bc65d | f4bc65d0cce40bf3a40e7e5adc5407d3f660bbc0 | results/milestones/M1.md, results/enumeration/crosscheck-m1.json |
 | M2 | search + witnesses | PASS | d2d085f | d2d085fe94a742cd66b368af2f4d4512d2543438 | results/milestones/M2.md, results/campaigns/* |
-| M3 | Lean/mathlib bridge | PASS | (this commit) | (verify below) | results/milestones/M3.md, lean/GraphLab/Facts.lean |
-| M4 | HPC/CPU/GPU | NOT STARTED | — | — | — |
+| M3 | Lean/mathlib bridge | PASS | 6f4f778 | 6f4f778b873937ea9c4341a314ab95a26b3b3353 | results/milestones/M3.md, lean/GraphLab/Facts.lean |
+| M4 | HPC/CPU/GPU | PASS | (this commit) | (verify below) | results/milestones/M4.md, results/bench/*, docs/GPU_FINDINGS.md |
 | M5 | research campaign | NOT STARTED | — | — | — |
 | M6 | release v0.1.0 | NOT STARTED | — | — | — |
 

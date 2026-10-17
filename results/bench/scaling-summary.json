@@ -1,0 +1,86 @@
+[
+  {
+    "bench": "enumerate+dedup(n<=6) + invariants(n<=5)",
+    "threads": 1,
+    "wall_ms": 1983,
+    "items_per_s": 316,
+    "speedup_vs_1t": 1.0
+  },
+  {
+    "bench": "labeled n=6 sweep: m+triangles+degree-seq",
+    "threads": 1,
+    "wall_ms": 19,
+    "items_per_s": 1724631,
+    "speedup_vs_1t": 1.0
+  },
+  {
+    "bench": "hadwiger exact (n<=6, 209 unlabeled + repeats)",
+    "threads": 1,
+    "wall_ms": 6,
+    "items_per_s": 34833,
+    "speedup_vs_1t": 1.0
+  },
+  {
+    "bench": "enumerate+dedup(n<=6) + invariants(n<=5)",
+    "threads": 8,
+    "wall_ms": 1989,
+    "items_per_s": 315,
+    "speedup_vs_1t": 1.0
+  },
+  {
+    "bench": "labeled n=6 sweep: m+triangles+degree-seq",
+    "threads": 8,
+    "wall_ms": 10,
+    "items_per_s": 3276800,
+    "speedup_vs_1t": 1.9
+  },
+  {
+    "bench": "hadwiger exact (n<=6, 209 unlabeled + repeats)",
+    "threads": 8,
+    "wall_ms": 1,
+    "items_per_s": 209000,
+    "speedup_vs_1t": 6.0
+  },
+  {
+    "bench": "enumerate+dedup(n<=6) + invariants(n<=5)",
+    "threads": 16,
+    "wall_ms": 1992,
+    "items_per_s": 314,
+    "speedup_vs_1t": 1.0
+  },
+  {
+    "bench": "labeled n=6 sweep: m+triangles+degree-seq",
+    "threads": 16,
+    "wall_ms": 10,
+    "items_per_s": 3276800,
+    "speedup_vs_1t": 1.9
+  },
+  {
+    "bench": "hadwiger exact (n<=6, 209 unlabeled + repeats)",
+    "threads": 16,
+    "wall_ms": 1,
+    "items_per_s": 209000,
+    "speedup_vs_1t": 6.0
+  },
+  {
+    "bench": "enumerate+dedup(n<=6) + invariants(n<=5)",
+    "threads": 48,
+    "wall_ms": 2010,
+    "items_per_s": 311,
+    "speedup_vs_1t": 0.99
+  },
+  {
+    "bench": "labeled n=6 sweep: m+triangles+degree-seq",
+    "threads": 48,
+    "wall_ms": 10,
+    "items_per_s": 3276800,
+    "speedup_vs_1t": 1.9
+  },
+  {
+    "bench": "hadwiger exact (n<=6, 209 unlabeled + repeats)",
+    "threads": 48,
+    "wall_ms": 1,
+    "items_per_s": 209000,
+    "speedup_vs_1t": 6.0
+  }
+]

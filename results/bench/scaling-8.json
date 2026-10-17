@@ -1,0 +1,35 @@
+{
+  "cpu": {
+    "benches": [
+      {
+        "items": 627,
+        "items_per_s": 315,
+        "name": "enumerate+dedup(n<=6) + invariants(n<=5)",
+        "single_thread_equiv_items_per_s": null,
+        "threads": 8,
+        "wall_ms": 1989
+      },
+      {
+        "items": 32768,
+        "items_per_s": 3276800,
+        "name": "labeled n=6 sweep: m+triangles+degree-seq",
+        "single_thread_equiv_items_per_s": null,
+        "threads": 8,
+        "wall_ms": 10
+      },
+      {
+        "items": 209,
+        "items_per_s": 209000,
+        "name": "hadwiger exact (n<=6, 209 unlabeled + repeats)",
+        "single_thread_equiv_items_per_s": null,
+        "threads": 8,
+        "wall_ms": 1
+      }
+    ],
+    "threads": 8
+  },
+  "gpu": {
+    "probed": false,
+    "used": false
+  }
+}
