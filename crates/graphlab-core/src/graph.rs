@@ -125,6 +125,92 @@ impl Graph {
         Self::complete_multipartite(&[a, b, c])
     }
 
+    /// Turán graph T(n, r): complete r-partite graph on n vertices whose partition
+    /// sizes are as equal as possible (differing by at most 1).
+    pub fn turan(n: usize, r: usize) -> Result<Self, GraphError> {
+        if r == 0 {
+            return Err(GraphError::InvalidVertexCount(0));
+        }
+        let n_tot = n;
+        if n_tot > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n_tot));
+        }
+        let q = n / r;
+        let s = n % r;
+        let mut parts = Vec::with_capacity(r);
+        for i in 0..r {
+            parts.push(if i < s { q + 1 } else { q });
+        }
+        Self::complete_multipartite(&parts)
+    }
+
+    /// 2D Grid graph P_a □ P_b on a * b vertices (Cartesian product of paths P_a and P_b).
+    pub fn grid_2d(a: usize, b: usize) -> Result<Self, GraphError> {
+        let n = a
+            .checked_mul(b)
+            .ok_or(GraphError::TooManyVertices(usize::MAX))?;
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        for i in 0..a {
+            for j in 0..b {
+                let u = i * b + j;
+                if j + 1 < b {
+                    g.add_edge(u, u + 1)?;
+                }
+                if i + 1 < a {
+                    g.add_edge(u, u + b)?;
+                }
+            }
+        }
+        Ok(g)
+    }
+
+    /// Cylinder graph C_a □ P_b on a * b vertices (Cartesian product of cycle C_a and path P_b).
+    pub fn cylinder(a: usize, b: usize) -> Result<Self, GraphError> {
+        if a < 3 {
+            return Err(GraphError::InvalidVertexCount(a as i64));
+        }
+        let n = a
+            .checked_mul(b)
+            .ok_or(GraphError::TooManyVertices(usize::MAX))?;
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        for i in 0..a {
+            for j in 0..b {
+                let u = i * b + j;
+                if j + 1 < b {
+                    g.add_edge(u, u + 1)?;
+                }
+                let next_i = (i + 1) % a;
+                let v = next_i * b + j;
+                g.add_edge(u, v)?;
+            }
+        }
+        Ok(g)
+    }
+
+    /// Hypercube graph Q_d on 2^d vertices (Hamming cube of dimension d).
+    pub fn hypercube(d: usize) -> Result<Self, GraphError> {
+        if d > 6 {
+            return Err(GraphError::TooManyVertices(1 << d));
+        }
+        let n = 1 << d;
+        let mut g = Self::empty(n)?;
+        for u in 0..n {
+            for bit in 0..d {
+                let v = u ^ (1 << bit);
+                if u < v {
+                    g.add_edge(u, v)?;
+                }
+            }
+        }
+        Ok(g)
+    }
+
     /// Apex graph G * K_1: adds a universal vertex adjacent to all existing vertices.
     pub fn apex(&self) -> Result<Self, GraphError> {
         let n = self.n;

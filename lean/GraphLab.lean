@@ -3,3 +3,7 @@ import GraphLab.MathlibBridge
 import GraphLab.Facts
 import GraphLab.CocktailParty
 import GraphLab.CompleteBipartite
+import GraphLab.Apex
+import GraphLab.CompleteMultipartite
+import GraphLab.Turan
+import GraphLab.Grid

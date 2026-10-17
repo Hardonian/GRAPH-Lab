@@ -242,6 +242,79 @@ pub fn apex_minor_model(base_model: &[usize], base_n: usize) -> Vec<usize> {
     assign
 }
 
+/// Exact Hadwiger number for the Turán graph T(n, r) (where n >= r >= 2).
+/// Universal closed form: floor((n + r) / 2).
+pub fn turan_hadwiger_number(n: usize, r: usize) -> usize {
+    if r == 0 || n == 0 {
+        return 0;
+    }
+    if r == 1 {
+        return 1;
+    }
+    if n < r {
+        return n;
+    }
+    (n + r) / 2
+}
+
+/// Generate an exact constructive branch-set certificate for the complete minor
+/// of size h(T(n, r)) in the Turán graph T(n, r).
+pub fn turan_minor_model(n: usize, r: usize) -> Vec<usize> {
+    if r == 0 || n == 0 {
+        return Vec::new();
+    }
+    let q = n / r;
+    let s = n % r;
+    let mut parts = Vec::with_capacity(r);
+    for i in 0..r {
+        parts.push(if i < s { q + 1 } else { q });
+    }
+    complete_multipartite_minor_model(&parts)
+}
+
+/// Exact Hadwiger number for the 2D Grid graph P_a □ P_b.
+pub fn grid_2d_hadwiger_number(a: usize, b: usize) -> usize {
+    if a == 0 || b == 0 {
+        return 0;
+    }
+    let min_dim = a.min(b);
+    let max_dim = a.max(b);
+    if min_dim == 1 {
+        if max_dim == 1 {
+            1
+        } else {
+            2
+        }
+    } else if min_dim == 2 {
+        3
+    } else {
+        4
+    }
+}
+
+/// Exact Hadwiger number for the Cylinder graph C_a □ P_b (where a >= 3).
+pub fn cylinder_hadwiger_number(a: usize, b: usize) -> usize {
+    if a < 3 || b == 0 {
+        return 0;
+    }
+    if b == 1 {
+        3
+    } else {
+        4
+    }
+}
+
+/// Exact Hadwiger number for the Hypercube graph Q_d (for d <= 3).
+pub fn hypercube_hadwiger_number(d: usize) -> usize {
+    match d {
+        0 => 1,
+        1 => 2,
+        2 => 3,
+        3 => 4,
+        _ => d + 1,
+    }
+}
+
 /// Is there a K_t minor? Restricted-growth branch-set search with deletion.
 pub fn has_kminor(g: &Graph, t: usize) -> Result<bool, HadwigerError> {
     let n = g.num_vertices();
@@ -259,6 +332,29 @@ pub fn has_kminor(g: &Graph, t: usize) -> Result<bool, HadwigerError> {
     }
     let mut assign = vec![DELETED; n];
     Ok(rg(g, t, 0, 0, &mut assign))
+}
+
+/// Find a constructive branch-set certificate for a K_t minor, if one exists.
+pub fn find_branch_model(g: &Graph, t: usize) -> Option<Vec<usize>> {
+    let n = g.num_vertices();
+    if n > HADWIGER_MAX_N || t == 0 || t > n {
+        return None;
+    }
+    if t == 1 {
+        let mut assign = vec![DELETED; n];
+        if n >= 1 {
+            assign[0] = 0;
+            return Some(assign);
+        } else {
+            return None;
+        }
+    }
+    let mut assign = vec![DELETED; n];
+    if rg(g, t, 0, 0, &mut assign) {
+        Some(assign)
+    } else {
+        None
+    }
 }
 
 fn rg(g: &Graph, t: usize, v: usize, parts_used: usize, assign: &mut [usize]) -> bool {
@@ -580,5 +676,67 @@ mod tests {
         let k23_model = complete_bipartite_minor_model(2, 3);
         let apex_model = apex_minor_model(&k23_model, 5);
         assert!(check_branch_model(&apex_k23, &apex_model, 4));
+    }
+
+    #[test]
+    fn turan_hadwiger_theorem_verified() {
+        // Exhaustive check across all 2 <= r <= n <= 10
+        for n in 2..=10 {
+            for r in 2..=n {
+                let g = Graph::turan(n, r).unwrap();
+                let expected_h = turan_hadwiger_number(n, r);
+                assert_eq!(expected_h, (n + r) / 2);
+                let actual_h = hadwiger_number(&g).unwrap();
+                assert_eq!(
+                    actual_h, expected_h,
+                    "Turán Hadwiger mismatch for T({n}, {r}): got {actual_h}, expected {expected_h}"
+                );
+                let model = turan_minor_model(n, r);
+                assert!(
+                    check_branch_model(&g, &model, expected_h),
+                    "Constructive minor model failed for T({n}, {r})"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn cartesian_products_hadwiger_verified() {
+        // 2D Grids P_a □ P_b for a * b <= 10
+        for a in 1..=10 {
+            for b in 1..=(10 / a) {
+                let g = Graph::grid_2d(a, b).unwrap();
+                let expected_h = grid_2d_hadwiger_number(a, b);
+                let actual_h = hadwiger_number(&g).unwrap();
+                assert_eq!(
+                    actual_h, expected_h,
+                    "Grid Hadwiger mismatch for P_{a} x P_{b}: got {actual_h}, expected {expected_h}"
+                );
+            }
+        }
+
+        // Cylinders C_a □ P_b for a >= 3, a * b <= 10
+        for a in 3..=5 {
+            for b in 1..=(10 / a) {
+                let g = Graph::cylinder(a, b).unwrap();
+                let expected_h = cylinder_hadwiger_number(a, b);
+                let actual_h = hadwiger_number(&g).unwrap();
+                assert_eq!(
+                    actual_h, expected_h,
+                    "Cylinder Hadwiger mismatch for C_{a} x P_{b}: got {actual_h}, expected {expected_h}"
+                );
+            }
+        }
+
+        // Hypercubes Q_d for d in 0..=3
+        for d in 0..=3 {
+            let g = Graph::hypercube(d).unwrap();
+            let expected_h = hypercube_hadwiger_number(d);
+            let actual_h = hadwiger_number(&g).unwrap();
+            assert_eq!(
+                actual_h, expected_h,
+                "Hypercube Hadwiger mismatch for Q_{d}: got {actual_h}, expected {expected_h}"
+            );
+        }
     }
 }

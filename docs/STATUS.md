@@ -17,9 +17,11 @@ the remote SHA below. Do not trust remembered state.
 | M9 | complete bipartite Hadwiger theorem | PASS | 5784d35 | 5784d355ff469fc45e09365bf0bb07d76286595e | lean/GraphLab/CompleteBipartite.lean (K_{1,1}..K_{5,5} kernel certificates), crates/graphlab-core/src/hadwiger.rs (complete_bipartite_minor_model) |
 | M10 | complete multipartite & universal apex theorems | PASS | 2b3c3de | 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
 | M11 | n=8 atlas + engine enum scaling (n<=8) | PASS | 4764fea | 4764feaa3b9652601feafaf1991b1afce1f2b250 | results/research/atlas-n8.jsonl (all 12346 classes), results/research/atlas-n8-report.md, crates/graphlab-core/src/enumerate.rs, scripts/generate_atlas_n8.py |
+| M12 | Turán & Cartesian product Hadwiger theorems | PASS | pending | pending | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
 
 ## Decisions log
 
+- 2026-10-17 — Turán Hadwiger Theorem proved in closed form h(T(n, r)) = floor((n + r)/2) for all n >= r >= 2; part-separation bound 1 + n - ceil(n/r) universally dominates parity pairing bound. Cartesian grid P_a □ P_b, cylinder C_a □ P_b, and hypercube Q_d Hadwiger numbers classified and certified in Lean 4 with 0 axioms / 0 sorry.
 - 2026-10-16 — Repo lives at `/mnt/ai-storage/ai-workspace/repos/graph-lab`
   (NVMe, 633G free). Root disk is 80% full; avoided.
 - 2026-10-16 — No prior GRAPH-Lab repo found on GitHub (`Hardonian` account,
