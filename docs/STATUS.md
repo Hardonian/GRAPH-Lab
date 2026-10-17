@@ -15,7 +15,7 @@ the remote SHA below. Do not trust remembered state.
 | M7 | theorem expansion + optimization | PASS | 921e4b1 | 921e4b18d385e5f4e99dc223a88330d6bf9987eb | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
 | M8 | n=7 atlas + parameterized CP proof | PASS | 785975b | 785975b851d3b2b695d0b8b59dcedccd2915cdf7 | results/research/atlas-n7.jsonl (all 1044 classes), results/research/atlas-n7-report.md, lean/GraphLab/CocktailParty.lean (cpBranchCode + CP6) |
 | M9 | complete bipartite Hadwiger theorem | PASS | 5784d35 | 5784d355ff469fc45e09365bf0bb07d76286595e | lean/GraphLab/CompleteBipartite.lean (K_{1,1}..K_{5,5} kernel certificates), crates/graphlab-core/src/hadwiger.rs (complete_bipartite_minor_model) |
-| M10 | complete multipartite & universal apex theorems | PASS | HEAD | pending push | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
+| M10 | complete multipartite & universal apex theorems | PASS | 2b3c3de | 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
 
 ## Decisions log
 
@@ -61,5 +61,5 @@ the remote SHA below. Do not trust remembered state.
 ## Remote
 
 - GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
-- Latest verified remote SHA: 4f3927ba3d9352e2356d19376e15a58b344bf997.
+- Latest verified remote SHA: 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f.
 
