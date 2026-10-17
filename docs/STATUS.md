@@ -6,8 +6,8 @@ the remote SHA below. Do not trust remembered state.
 | Milestone | Gate | Status | Commit (local) | Remote SHA verified | Evidence |
 |---|---|---|---|---|---|
 | M0 | recon + safe foundation | PASS | e2a9f8f→f79d8cf (amended) | f79d8cfd9b752ffe2007d71e066ea583821114a8 | docs/HOST_CAPABILITIES.md, results/host-capabilities.json, results/doctor-m0.json, results/milestones/M0.md |
-| M1 | exact graph engine | NOT STARTED | — | — | — |
-| M2 | search + witnesses | NOT STARTED | — | — | — |
+| M1 | exact graph engine | PASS | f4bc65d | f4bc65d0cce40bf3a40e7e5adc5407d3f660bbc0 | results/milestones/M1.md, results/enumeration/crosscheck-m1.json |
+| M2 | search + witnesses | PASS | (this commit) | (verify below) | results/milestones/M2.md, results/campaigns/* |
 | M3 | Lean/mathlib bridge | NOT STARTED | — | — | — |
 | M4 | HPC/CPU/GPU | NOT STARTED | — | — | — |
 | M5 | research campaign | NOT STARTED | — | — | — |

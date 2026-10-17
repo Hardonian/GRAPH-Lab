@@ -54,6 +54,35 @@ enum Cmd {
         #[arg(long)]
         decode: Option<String>,
     },
+    /// Exact Hadwiger number h(G) (K_t minor search, n <= 10)
+    Hadwiger {
+        #[arg(long)]
+        input: String,
+        #[arg(long)]
+        json: bool,
+    },
+    /// Run a campaign (TOML) over its declared domain
+    Search {
+        #[arg(long)]
+        campaign: String,
+        #[arg(long)]
+        output: Option<String>,
+        /// override thread budget (still capped at 48 host default)
+        #[arg(long)]
+        threads: Option<usize>,
+    },
+    /// Minimize a witness file while preserving its violation
+    Minimize {
+        #[arg(long)]
+        witness: String,
+        #[arg(long)]
+        output: Option<String>,
+    },
+    /// Independently recheck a witness file
+    Verify {
+        #[arg(long)]
+        witness: String,
+    },
 }
 
 #[derive(Serialize)]
@@ -310,5 +339,116 @@ fn main() -> Result<()> {
             println!("{re}");
             Ok(())
         }
+        Cmd::Hadwiger { input, json } => {
+            let g = parse_graph_input(&input)?;
+            let h = match graphlab_core::hadwiger::hadwiger_number(&g) {
+                Ok(h) => h,
+                Err(e) => {
+                    eprintln!("graphlab hadwiger: {e}");
+                    std::process::exit(7);
+                }
+            };
+            if json {
+                let v = serde_json::json!({
+                    "graph6": g6::encode_graph6(&g), "hadwiger": h,
+                    "chi": graphlab_core::invariants::chromatic_number(&g),
+                    "n": g.num_vertices(), "m": g.edge_count(),
+                });
+                println!("{}", serde_json::to_string_pretty(&v)?);
+            } else {
+                println!("{h}");
+            }
+            Ok(())
+        }
+        Cmd::Search {
+            campaign,
+            output,
+            threads,
+        } => {
+            let text = std::fs::read_to_string(&campaign)
+                .with_context(|| format!("reading {campaign}"))?;
+            let c = match graphlab_core::campaign::Campaign::from_toml_str(&text) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("graphlab search: {e}");
+                    std::process::exit(8);
+                }
+            };
+            let pred = match graphlab_core::predicates::predicate_from_str(&c.predicate) {
+                Ok(p) => p,
+                Err(e) => {
+                    eprintln!("graphlab search: {e}");
+                    std::process::exit(8);
+                }
+            };
+            let threads = threads.or(c.threads).unwrap_or(48).min(48);
+            let out = output.unwrap_or_else(|| format!("results/campaigns/{}.jsonl", c.name));
+            if let Some(dir) = std::path::Path::new(&out).parent() {
+                std::fs::create_dir_all(dir)?;
+            }
+            match graphlab_core::campaign::run(&c, pred.as_ref(), threads, &out) {
+                Ok(summary) => {
+                    println!("{}", serde_json::to_string_pretty(&summary)?);
+                    Ok(())
+                }
+                Err(e) => {
+                    eprintln!("graphlab search: {e}");
+                    std::process::exit(9);
+                }
+            }
+        }
+        Cmd::Minimize { witness, output } => {
+            let w = load_first_witness(&witness)?;
+            let m = match graphlab_core::minimize::minimize(&w) {
+                Ok(m) => m,
+                Err(e) => {
+                    eprintln!("graphlab minimize: {e}");
+                    std::process::exit(10);
+                }
+            };
+            let out = output.unwrap_or_else(|| "-".into());
+            let body = serde_json::to_string_pretty(&m)?;
+            if out == "-" {
+                println!("{body}");
+            } else {
+                std::fs::write(&out, body)?;
+                eprintln!("minimized witness written to {out}");
+            }
+            Ok(())
+        }
+        Cmd::Verify { witness } => {
+            let w = load_first_witness(&witness)?;
+            match graphlab_core::verify::independent_report(&w) {
+                Ok(v) => {
+                    println!("{}", serde_json::to_string_pretty(&v)?);
+                    Ok(())
+                }
+                Err(e) => {
+                    eprintln!("graphlab verify: FAIL — {e}");
+                    std::process::exit(11);
+                }
+            }
+        }
     }
+}
+
+/// Load the first non-manifest, non-rejected witness line from a JSONL file.
+fn load_first_witness(path: &str) -> Result<graphlab_core::search::Witness> {
+    use graphlab_core::search::Witness;
+    let text = std::fs::read_to_string(path).with_context(|| format!("reading {path}"))?;
+    for line in text.lines() {
+        let line = line.trim();
+        if line.is_empty() {
+            continue;
+        }
+        let v: serde_json::Value = serde_json::from_str(line)
+            .with_context(|| format!("bad JSONL line: {}", &line[..line.len().min(80)]))?;
+        if v.get("rejected").is_some() || v.get("manifest").is_some() {
+            continue;
+        }
+        let w: Witness =
+            serde_json::from_value(v).with_context(|| "line is not a graphlab-witness/1 object")?;
+        return Ok(w);
+    }
+    anyhow::bail!("no witnesses found in {path}")
 }

@@ -1,0 +1,14 @@
+# sampled-experimental — demonstrates the EXPERIMENTAL (seeded sample) mode.
+# Predicate: weak-hadwiger (h*alpha >= n). This is NOT exhaustive: no
+# universal claim may be made from it. The file schema records mode, seed,
+# samples, p, and evidence=Experimental for every witness line.
+name = "sampled-weakhadwiger"
+predicate = "weak-hadwiger-v1"
+mode = "sampled"
+n_min = 4
+n_max = 9
+seed = 20261016
+samples = 20000
+p = 0.35
+threads = 48
+max_witnesses = 0

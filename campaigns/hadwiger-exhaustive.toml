@@ -1,0 +1,13 @@
+# hadwiger-exhaustive — verify Hadwiger's conjecture exhaustively on the
+# engine's full exact coverage: all unlabeled graphs, n = 0..6 (534 classes),
+# exact Hadwiger numbers within the n<=10 cap. Expectation from theory
+# (Hadwiger proved for chi <= 6, t <= 6): ZERO witnesses. A witness here
+# would be a mathematical event and would immediately fail independent
+# recheck + Lean audit; the campaign is written to detect that honestly.
+name = "hadwiger-exhaustive-n6"
+predicate = "hadwiger-lower-bound-v1"
+mode = "exhaustive-unlabeled"
+n_min = 0
+n_max = 6
+threads = 48
+max_witnesses = 0

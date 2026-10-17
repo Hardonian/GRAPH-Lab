@@ -1,0 +1,11 @@
+# baseline campaign — the one-command replay target.
+# Canary predicate on exhaustive unlabeled n=1..4: must produce exactly 4
+# witnesses (K1..K4). Proves the full search->recheck->file pipeline works
+# with zero external dependencies on GPU/Lean/SMT.
+name = "baseline-canary"
+predicate = "canary-chi-le-n-1-v1"
+mode = "exhaustive-unlabeled"
+n_min = 1
+n_max = 4
+threads = 8
+max_witnesses = 0

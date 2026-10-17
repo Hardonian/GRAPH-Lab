@@ -1,0 +1,26 @@
+{
+  "witness": {
+    "schema": "graphlab-witness/1",
+    "campaign": "baseline-canary",
+    "predicate": "canary-chi-le-n-1-v1",
+    "graph6": "@",
+    "n": 1,
+    "m": 0,
+    "reported": {
+      "chi": 1,
+      "n": 1
+    },
+    "domain_mode": "ExhaustiveUnlabeled",
+    "domain_scope": {
+      "n_min": 1,
+      "n_max": 4,
+      "exhaustive": true,
+      "samples": null
+    },
+    "evidence": "ExactFinite",
+    "seed": null,
+    "run_id": "baseline-canary-1792197249s"
+  },
+  "steps": [],
+  "original_graph6": "@"
+}

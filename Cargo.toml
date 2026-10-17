@@ -10,6 +10,7 @@ license = "MIT"
 repository = "https://github.com/Hardonian/GRAPH-Lab"
 
 [workspace.dependencies]
+rayon = "1.10"
 anyhow = "1"
 clap = { version = "4", features = ["derive"] }
 graph6 = "2"
