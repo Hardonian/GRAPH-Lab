@@ -12,7 +12,7 @@ the remote SHA below. Do not trust remembered state.
 | M4 | HPC/CPU/GPU | PASS | 2a7937d | 2a7937d67c1f1f7426a7f132296b665f0205a27b | results/milestones/M4.md, results/bench/*, docs/GPU_FINDINGS.md |
 | M5 | research campaign | PASS | c0bcfee | c0bcfee8a60796d213c4f7c53cdb87c356f6a3e8 | results/research/M5-report.md, docs/RESEARCH_PROGRAM.md, lean/GraphLab/Facts.lean (CP(2..3) certificates) |
 | M6 | release v0.1.0 | PASS | e885060 | e88506093cae18ef17c2f0d6118d0d5718df28ea | README.md, CHANGELOG.md, distribution artifacts |
-| M7 | theorem expansion + optimization | PASS | HEAD | pending push | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
+| M7 | theorem expansion + optimization | PASS | 921e4b1 | 921e4b18d385e5f4e99dc223a88330d6bf9987eb | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
 
 ## Decisions log
 
@@ -39,5 +39,5 @@ the remote SHA below. Do not trust remembered state.
 ## Remote
 
 - GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
-- Latest verified remote SHA: 41b2ba31c30cff83ff52503954a871582ef60aae.
+- Latest verified remote SHA: 921e4b18d385e5f4e99dc223a88330d6bf9987eb.
 
