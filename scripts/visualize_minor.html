@@ -26,6 +26,7 @@
     header {
       padding: 1.25rem 2rem;
       background: rgba(15, 23, 42, 0.7);
+      -webkit-backdrop-filter: blur(12px);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -67,6 +68,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1.25rem;
+      -webkit-backdrop-filter: blur(8px);
       backdrop-filter: blur(8px);
     }
     .card-title {
@@ -144,6 +146,7 @@
       display: flex;
       align-items: center;
       gap: 1.5rem;
+      -webkit-backdrop-filter: blur(8px);
       backdrop-filter: blur(8px);
     }
     .slider-wrap {
@@ -165,6 +168,23 @@
       white-space: pre-wrap;
       color: #38bdf8;
     }
+    .header-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .status-lean {
+      color: #10b981;
+    }
+    .progress-val {
+      font-size: 0.85rem;
+      font-weight: 700;
+      width: 45px;
+    }
+    .btn-anim {
+      width: auto;
+      padding: 0.4rem 1rem;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -173,7 +193,7 @@
       <h1>GRAPH-Lab</h1>
       <span class="badge">Minor Contraction Visualizer</span>
     </div>
-    <div style="font-size: 0.85rem; color: var(--text-muted);">
+    <div class="header-subtitle">
       Kernel-Checked Branch Models (Hadwiger $h \ge \chi$)
     </div>
   </header>
@@ -182,7 +202,7 @@
     <div class="sidebar">
       <div class="card">
         <div class="card-title">Select Graph Preset</div>
-        <select id="presetSelect" onchange="loadPreset()">
+        <select id="presetSelect" title="Select Graph Preset" aria-label="Select Graph Preset" onchange="loadPreset()">
           <option value="f5">Costa F_5 (p=5, chi=3, h=3)</option>
           <option value="f7" selected>Costa F_7 (p=7, chi=4, h=5, Margin +1)</option>
           <option value="f11">Costa F_11 (p=11, chi=6, h=6)</option>
@@ -202,7 +222,7 @@
           <tr><td>Chromatic Number $\chi$</td><td id="statChi">4</td></tr>
           <tr><td>Minor Number $h(G)$</td><td id="statH">5</td></tr>
           <tr><td>Surplus Margin</td><td id="statMargin">+1</td></tr>
-          <tr><td>Status</td><td style="color:#10b981;">LEAN_CHECKED</td></tr>
+          <tr><td>Status</td><td class="status-lean">LEAN_CHECKED</td></tr>
         </table>
       </div>
 
@@ -220,9 +240,9 @@
           <div class="slider-wrap">
             <label for="contractSlider">Contraction Progress:</label>
             <input type="range" id="contractSlider" min="0" max="100" value="0" oninput="updateContraction(this.value)">
-            <span id="progressText" style="font-size:0.85rem; font-weight:700; width:45px;">0%</span>
+            <span id="progressText" class="progress-val">0%</span>
           </div>
-          <button onclick="toggleAnimate()" style="width:auto; padding:0.4rem 1rem; margin:0;" id="animBtn">Animate</button>
+          <button onclick="toggleAnimate()" class="btn-anim" id="animBtn">Animate</button>
         </div>
       </div>
     </div>
