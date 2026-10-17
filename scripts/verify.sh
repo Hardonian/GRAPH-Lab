@@ -21,8 +21,7 @@ run "py-mypy"    uv run mypy python/graphlab
 run "py-pytest"  uv run pytest -q
 
 if [ -d lean ]; then
-  run "lean-build" bash -c 'cd lean && lake build'
-  run "lean-audit" python3 scripts/lean_audit.py
+  run "lean-audit" python3 scripts/lean_audit.py --run
 else
   echo "== lean =="
   echo "SKIP: lean/ not present yet (Milestone 3)"
