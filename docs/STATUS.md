@@ -18,7 +18,7 @@ the remote SHA below. Do not trust remembered state.
 | M10 | complete multipartite & universal apex theorems | PASS | 2b3c3de | 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
 | M11 | n=8 atlas + engine enum scaling (n<=8) | PASS | 4764fea | 4764feaa3b9652601feafaf1991b1afce1f2b250 | results/research/atlas-n8.jsonl (all 12346 classes), results/research/atlas-n8-report.md, crates/graphlab-core/src/enumerate.rs, scripts/generate_atlas_n8.py |
 | M12 | Turán & Cartesian product Hadwiger theorems | PASS | fa6199a | fa6199ad68a95c63be20bbf6d94c46d0253b40be | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
-| M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | PENDING | PENDING | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
+| M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | c7334fc | c7334fc848ba50a91ea2a1612554bea84184c253 | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
 
 ## Decisions log
 
