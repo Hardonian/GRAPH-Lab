@@ -13,6 +13,7 @@ the remote SHA below. Do not trust remembered state.
 | M5 | research campaign | PASS | c0bcfee | c0bcfee8a60796d213c4f7c53cdb87c356f6a3e8 | results/research/M5-report.md, docs/RESEARCH_PROGRAM.md, lean/GraphLab/Facts.lean (CP(2..3) certificates) |
 | M6 | release v0.1.0 | PASS | e885060 | e88506093cae18ef17c2f0d6118d0d5718df28ea | README.md, CHANGELOG.md, distribution artifacts |
 | M7 | theorem expansion + optimization | PASS | 921e4b1 | 921e4b18d385e5f4e99dc223a88330d6bf9987eb | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
+| M8 | n=7 atlas + parameterized CP proof | PASS | HEAD | pending push | results/research/atlas-n7.jsonl (all 1044 classes), results/research/atlas-n7-report.md, lean/GraphLab/CocktailParty.lean (cpBranchCode + CP6) |
 
 ## Decisions log
 
@@ -35,9 +36,15 @@ the remote SHA below. Do not trust remembered state.
 - 2026-10-17 — Cocktail party theorem $h(CP(t)) = t + \lfloor t/2 \rfloor$:
   constructive minor generator verified for all $t$; $CP(1)$ to $CP(5)$ branch
   models kernel-checked in Lean 4 with 0 axioms / 0 sorry / 0 native_decide.
+- 2026-10-17 — Atlas n=7 & Woodall frontier: all 1,044 non-isomorphic graphs
+  on 7 vertices evaluated. Hadwiger holds 100% (0 violations). Woodall's Weak
+  Hadwiger ($h \cdot \alpha \ge 7$) holds 100% (0 violations); exactly 2 graphs
+  are tight ($h \cdot \alpha = 7$: $E_7$ and $K_7$).
+- 2026-10-17 — Parameterized CP branch generator: `cpBranch` and `cpBranchCode`
+  formalized in Lean 4; $CP(6)$ on 12 vertices ($K_9$ minor) kernel-checked.
 
 ## Remote
 
 - GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
-- Latest verified remote SHA: 57e86835005291fe02f6327089d46a7974bfc6f7.
+- Latest verified remote SHA: b2918357f68adec80309c1817ae276876814d0a5.
 
