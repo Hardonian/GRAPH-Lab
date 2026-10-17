@@ -86,6 +86,33 @@ pub fn cocktail_party_minor_model(t: usize) -> Vec<usize> {
     assign
 }
 
+/// Generate the exact constructive branch-set certificate for the complete minor
+/// K_{a + 1} of the complete bipartite graph K_{a, b} (where 1 <= a <= b).
+pub fn complete_bipartite_minor_model(a: usize, b: usize) -> Vec<usize> {
+    if a == 0 || b == 0 {
+        return Vec::new();
+    }
+    let n = a + b;
+    let mut assign = vec![DELETED; n];
+    if a == 1 {
+        // K_{1, b}: vertex 0 in A is branch 0; vertex 1 in B is branch 1; rest deleted
+        assign[0] = 0;
+        assign[1] = 1;
+        return assign;
+    }
+    // For a >= 2:
+    // a - 1 mixed branches: {i, a + i} for i in 0..(a - 1)
+    for i in 0..(a - 1) {
+        assign[i] = i;
+        assign[a + i] = i;
+    }
+    // 1 singleton in A: {a - 1} is branch a - 1
+    assign[a - 1] = a - 1;
+    // 1 singleton in B: {2a - 1} is branch a (since b >= a, 2a - 1 < a + b)
+    assign[2 * a - 1] = a;
+    assign
+}
+
 /// Is there a K_t minor? Restricted-growth branch-set search with deletion.
 pub fn has_kminor(g: &Graph, t: usize) -> Result<bool, HadwigerError> {
     let n = g.num_vertices();
@@ -326,6 +353,35 @@ mod tests {
             assert!(
                 check_branch_model(&cp, &model, s),
                 "constructive minor failed for t={t}, target s={s}"
+            );
+        }
+    }
+
+    #[test]
+    fn complete_bipartite_hadwiger_theorem_verified() {
+        // Test exact exhaustive hadwiger_number and constructive model for a+b <= 10
+        for a in 1..=5 {
+            for b in a..=(10 - a) {
+                let g = Graph::complete_bipartite(a, b).unwrap();
+                let model = complete_bipartite_minor_model(a, b);
+                assert!(
+                    check_branch_model(&g, &model, a + 1),
+                    "constructive K_{{a+1}} minor failed for K_{{{a},{b}}}"
+                );
+                assert_eq!(
+                    hadwiger_number(&g).unwrap(),
+                    a + 1,
+                    "h(K_{{{a},{b}}}) != a + 1"
+                );
+            }
+        }
+        // Test constructive model for larger a, b (e.g. a=6, b=8 on n=14)
+        for (a, b) in [(6, 6), (6, 8), (7, 10), (8, 12)] {
+            let g = Graph::complete_bipartite(a, b).unwrap();
+            let model = complete_bipartite_minor_model(a, b);
+            assert!(
+                check_branch_model(&g, &model, a + 1),
+                "constructive K_{{a+1}} minor failed for large K_{{{a},{b}}}"
             );
         }
     }

@@ -76,6 +76,22 @@ impl Graph {
         Ok(g)
     }
 
+    /// Complete bipartite graph K_{a, b} on a + b vertices.
+    /// Vertices 0..a form part A; vertices a..(a+b) form part B.
+    pub fn complete_bipartite(a: usize, b: usize) -> Result<Self, GraphError> {
+        let n = a + b;
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        for u in 0..a {
+            for v in a..n {
+                g.add_edge(u, v)?;
+            }
+        }
+        Ok(g)
+    }
+
     /// Build from an edge list. Edges are validated; duplicates are merged.
     pub fn from_edges(n: usize, edges: &[(usize, usize)]) -> Result<Self, GraphError> {
         let mut g = Self::empty(n)?;

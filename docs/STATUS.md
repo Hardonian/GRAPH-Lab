@@ -14,6 +14,7 @@ the remote SHA below. Do not trust remembered state.
 | M6 | release v0.1.0 | PASS | e885060 | e88506093cae18ef17c2f0d6118d0d5718df28ea | README.md, CHANGELOG.md, distribution artifacts |
 | M7 | theorem expansion + optimization | PASS | 921e4b1 | 921e4b18d385e5f4e99dc223a88330d6bf9987eb | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
 | M8 | n=7 atlas + parameterized CP proof | PASS | 785975b | 785975b851d3b2b695d0b8b59dcedccd2915cdf7 | results/research/atlas-n7.jsonl (all 1044 classes), results/research/atlas-n7-report.md, lean/GraphLab/CocktailParty.lean (cpBranchCode + CP6) |
+| M9 | complete bipartite Hadwiger theorem | PASS | HEAD | pending push | lean/GraphLab/CompleteBipartite.lean (K_{1,1}..K_{5,5} kernel certificates), crates/graphlab-core/src/hadwiger.rs (complete_bipartite_minor_model) |
 
 ## Decisions log
 
@@ -42,6 +43,11 @@ the remote SHA below. Do not trust remembered state.
   are tight ($h \cdot \alpha = 7$: $E_7$ and $K_7$).
 - 2026-10-17 — Parameterized CP branch generator: `cpBranch` and `cpBranchCode`
   formalized in Lean 4; $CP(6)$ on 12 vertices ($K_9$ minor) kernel-checked.
+- 2026-10-17 — Complete Bipartite Hadwiger Theorem $h(K_{a, b}) = a + 1$
+  ($\forall 1 \le a \le b$): proved mathematically by bipartite partition
+  parity (at most one branch set in A, one in B, all others mixed requiring >=1
+  vertex of A $\implies s \le a + 1$). Lower bound constructed via a-1 mixed
+  pairs and 2 singletons. Lean 4 kernel checks $K_{1,1}$ to $K_{5,5}$.
 
 ## Remote
 
