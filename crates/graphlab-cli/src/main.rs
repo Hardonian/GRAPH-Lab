@@ -39,6 +39,15 @@ enum Cmd {
         #[arg(long)]
         output: Option<String>,
     },
+    /// Generate complete atlas with exact invariants and Hadwiger numbers
+    Atlas {
+        #[arg(long)]
+        vertices: usize,
+        #[arg(long)]
+        output: Option<String>,
+        #[arg(long)]
+        threads: Option<usize>,
+    },
     /// Exact invariants of a graph (graph6 string, or '-' = stdin)
     Invariants {
         #[arg(long)]
@@ -297,12 +306,117 @@ fn cmd_enumerate(vertices: usize, output: Option<String>) -> Result<()> {
     Ok(())
 }
 
+fn cmd_atlas(vertices: usize, output: Option<String>, threads: Option<usize>) -> Result<()> {
+    let t_budget = threads.unwrap_or(24).min(48);
+    let pool = rayon::ThreadPoolBuilder::new()
+        .num_threads(t_budget)
+        .build()?;
+
+    eprintln!("Enumerating unlabeled graphs on {vertices} vertices...");
+    let start_enum = std::time::Instant::now();
+    let graphs = match enumerate::enumerate_unlabeled(vertices) {
+        Ok(g) => g,
+        Err(e) => {
+            eprintln!("graphlab atlas (enum): {e}");
+            std::process::exit(3);
+        }
+    };
+    let enum_time = start_enum.elapsed();
+    let total = graphs.len();
+    eprintln!("Enumerated {total} unlabeled graphs in {:.2?}", enum_time);
+
+    eprintln!("Evaluating invariants and Hadwiger numbers using {t_budget} threads...");
+    let start_eval = std::time::Instant::now();
+
+    let records: Vec<_> = pool.install(|| {
+        use rayon::prelude::*;
+        graphs
+            .par_iter()
+            .map(|g| {
+                let iv = invariants::all_invariants(g);
+                let h = if g.num_vertices() <= graphlab_core::hadwiger::HADWIGER_MAX_N {
+                    graphlab_core::hadwiger::hadwiger_number(g).unwrap_or(0)
+                } else {
+                    graphlab_core::hadwiger_sat::hadwiger_number_sat(g).unwrap_or(0)
+                };
+                let g6_str = g6::encode_graph6(g);
+                let woodall_prod = h * iv.independence_number;
+                serde_json::json!({
+                    "graph6": g6_str,
+                    "n": iv.n,
+                    "m": iv.m,
+                    "degree_sequence": iv.degree_sequence,
+                    "connected": iv.connected,
+                    "components": iv.components,
+                    "triangles": iv.triangles,
+                    "cycle4": iv.cycle4,
+                    "omega": iv.clique_number,
+                    "alpha": iv.independence_number,
+                    "chi": iv.chromatic_number,
+                    "hadwiger": h,
+                    "woodall_product": woodall_prod,
+                    "woodall_ratio": (woodall_prod as f64) / (iv.n as f64),
+                    "woodall_tight": woodall_prod == iv.n,
+                    "hadwiger_holds": iv.chromatic_number <= h,
+                    "weak_hadwiger_holds": woodall_prod >= iv.n,
+                })
+            })
+            .collect()
+    });
+    let eval_time = start_eval.elapsed();
+    eprintln!(
+        "Evaluated {total} graphs in {:.2?} ({:.1} graphs/sec)",
+        eval_time,
+        total as f64 / eval_time.as_secs_f64().max(0.001)
+    );
+
+    let mut out: Box<dyn std::io::Write> = match &output {
+        Some(p) => {
+            if let Some(parent) = std::path::Path::new(p).parent() {
+                std::fs::create_dir_all(parent)?;
+            }
+            Box::new(std::io::BufWriter::new(std::fs::File::create(p)?))
+        }
+        None => Box::new(std::io::BufWriter::new(std::io::stdout())),
+    };
+
+    let mut hadwiger_violations = 0;
+    let mut weak_violations = 0;
+    let mut tight_cases = 0;
+
+    for r in &records {
+        if !r["hadwiger_holds"].as_bool().unwrap_or(false) {
+            hadwiger_violations += 1;
+        }
+        if !r["weak_hadwiger_holds"].as_bool().unwrap_or(false) {
+            weak_violations += 1;
+        }
+        if r["woodall_tight"].as_bool().unwrap_or(false) {
+            tight_cases += 1;
+        }
+        writeln!(out, "{r}")?;
+    }
+    out.flush()?;
+
+    eprintln!("Atlas complete: {total} graphs.");
+    eprintln!("Hadwiger violations: {hadwiger_violations}");
+    eprintln!("Weak Hadwiger violations: {weak_violations}");
+    eprintln!("Tight extremal cases (h * alpha = n): {tight_cases}");
+
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.cmd {
         Cmd::Doctor { json } => cmd_doctor(json),
         Cmd::Hash { path } => cmd_hash(&path),
         Cmd::Enumerate { vertices, output } => cmd_enumerate(vertices, output),
+        Cmd::Atlas {
+            vertices,
+            output,
+            threads,
+        } => cmd_atlas(vertices, output, threads),
         Cmd::Invariants { input, json } => {
             let g = parse_graph_input(&input)?;
             let iv = invariants::all_invariants(&g);

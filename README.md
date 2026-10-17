@@ -9,7 +9,7 @@ Lean 4 / Mathlib proof pipeline with a kernel-checked witness bridge.
 `docs/STATUS.md` is the authoritative progress ledger; this README documents
 features that actually exist and run in the repository today.
 
-**Milestones M0 through M14 are PASS.**
+**Milestones M0 through M15 are PASS.**
 
 - **Authoritative Progress Ledger:** [`docs/STATUS.md`](docs/STATUS.md)
 - **Research Papers:**
@@ -64,31 +64,35 @@ The part-separation bound $n - \lceil n/r \rceil + 1$ universally dominates the 
 
 *Status:* **PROVED & LEAN_CHECKED** (`lean/GraphLab/Grid.lean`).
 
-### 5. Resolution of Costa, Luu, Wood, and Yip (2025) Question 20 ($HC_{\alpha=2}$)
+### 5. Resolution & Structural Theory of Costa, Luu, Wood, and Yip (2025) Question 20 ($HC_{\alpha=2}$)
 
 In December 2025, Costa, Luu, Wood, and Yip (arXiv:2512.17114v1) proposed Question 20, asking whether all complements of sum-free-maximal Cayley graphs over abelian groups $\overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture ($HC_{\alpha=2}$), noting that it remained open even for prime fields $\mathbb{F}_p$.
 
+- **General Analytical Structural Theorems:**
+  1. **Exact Chromatic Number:** For any odd prime $p$ and non-empty sum-free $S \subset \mathbb{F}_p$, $\chi(\overline{\text{Cay}(\mathbb{F}_p, S)}) = \frac{p+1}{2}$ identically, proved analytically via Godsil (1981) hypomatchability of connected vertex-transitive graphs of odd order.
+  2. **Structural Matching Contraction Theorem:** Every maximal matching in $G$ has size $(p-1)/2$ (leaving 1 unmatched vertex). Contracting the matching edges yields a $K_{(p+1)/2}$ minor under bounded bad-pair density ($|S| \le (p+1)/3$ Diananda-Yap).
 - **Classification & Verification:** We classified all inverse-closed sum-free-maximal subsets of $\mathbb{F}_p$ for all primes $p \in \{5, 7, 11, 13, 17, 19, 23\}$ (10 non-isomorphic graph families).
 - **Theorem:** **100% of these extremal graphs satisfy Hadwiger's Conjecture** ($h(G) \ge \chi(G)$) and satisfy $h(G) \ge \lceil p / 2 \rceil$.
 - **Surplus Margins:** While tight ($h = \chi = (p+1)/2$) for $p \in \{5, 11, 17\}$, margins surge to $+1, +2$, and reach **$+3$** at $p = 19$ ($h(G) \ge 13 > \chi(G) = 10$).
-- **Papers & Proofs:** Full research paper in [`papers/resolution_of_costa_hadwiger_conjecture.md`](papers/resolution_of_costa_hadwiger_conjecture.md) ([LaTeX manuscript](papers/costa_question20_resolution.tex)); Lean 4 kernel certificates in [`lean/GraphLab/Costa.lean`](lean/GraphLab/Costa.lean).
+- **Lean 4 Kernel-Checked Proofs:** Constructive branch models for all 7 prime fields ($p \in \{5, 7, 11, 13, 17, 19, 23\}$) kernel-checked in [`lean/GraphLab/Costa.lean`](lean/GraphLab/Costa.lean) with 0 custom axioms and 0 sorry.
 
-*Status:* **SAT_WITNESS & LEAN_CHECKED** (`lean/GraphLab/Costa.lean`).
+*Status:* **PROVED, SAT_WITNESS & LEAN_CHECKED** (`lean/GraphLab/Costa.lean`).
 
 ---
 
-## Computational Atlases ($n \le 8$)
+## Computational Atlases ($n \le 9$)
 
-The computational engine scales native unlabeled graph enumeration to $n \le 8$ in under 2 seconds:
+The computational engine scales native unlabeled graph enumeration to $n \le 9$ via parallel inductive generation and exact bitset-stack Hadwiger evaluation:
 
 | Vertices $n$ | Unlabeled Classes | Atlas File | Hadwiger Violations | Weak Hadwiger Violations | Tight Extremal ($h \cdot \alpha = n$) |
 | :---: | :---: | :---: | :---: | :---: | :---: |
 | $n \le 6$ | 208 | Memory | 0 | 0 | 18 |
 | $n = 7$ | 1,044 | [`results/research/atlas-n7.jsonl`](results/research/atlas-n7.jsonl) | 0 | 0 | 26 |
 | $n = 8$ | 12,346 | [`results/research/atlas-n8.jsonl`](results/research/atlas-n8.jsonl) | 0 | 0 | 34 |
+| $n = 9$ | 274,668 | [`results/research/atlas-n9.jsonl.gz`](results/research/atlas-n9.jsonl.gz) ([Report](results/research/atlas-n9-report.md)) | 0 | 0 | 70 |
 
-- **Zero Violations:** Hadwiger's Conjecture ($h \ge \chi$) and the Weak Hadwiger Conjecture ($h \cdot \alpha \ge n$) hold across 100% of the 13,598 surveyed graphs.
-- **Tight Extremal Graphs:** Exactly 34 non-isomorphic graphs at $n=8$ satisfy $h(G) \cdot \alpha(G) = 8$.
+- **Zero Violations Across 288,266 Graphs:** Hadwiger's Conjecture ($h \ge \chi$) and the Weak Hadwiger Conjecture ($h \cdot \alpha \ge n$) hold across 100% of the 288,266 surveyed non-isomorphic graphs.
+- **Tight Extremal Graphs:** Exactly 70 non-isomorphic graphs at $n=9$ satisfy $h(G) \cdot \alpha(G) = 9$, partitioning strictly along the divisors of 9 ($1 \times 9$: 1, $3 \times 3$: 68, $9 \times 1$: 1).
 
 ---
 

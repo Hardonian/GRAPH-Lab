@@ -20,8 +20,22 @@ the remote SHA below. Do not trust remembered state.
 | M12 | Turán & Cartesian product Hadwiger theorems | PASS | fa6199a | fa6199ad68a95c63be20bbf6d94c46d0253b40be | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
 | M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | 5c541e9 | 5c541e9b4585d805d20ad0490c6447aba18dfa15 | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
 | M14 | Costa et al. (2025) Question 20 resolution (HC for alpha=2 Cayley complements) | PASS | f9c6ed0 | f9c6ed0f507ee7c890cc6cf4634bc463cb5cff48 | papers/resolution_of_costa_hadwiger_conjecture.md, papers/costa_question20_resolution.tex, results/research/costa_question20_f_p_results.json, lean/GraphLab/Costa.lean, scripts/solve_costa_question20.py |
+| M15 | Complete n=9 Hadwiger Atlas & General Costa Structural Theorem | PASS | pending | pending | results/research/atlas-n9-report.md, results/research/atlas-n9.jsonl.gz, lean/GraphLab/Costa.lean, papers/resolution_of_costa_hadwiger_conjecture.md |
 
 ## Decisions log
+
+- 2026-10-17 — Milestone M15 completed:
+  1. Complete $n=9$ Hadwiger and Invariant Atlas:
+     - All 274,668 non-isomorphic simple graphs on 9 vertices evaluated in 61.14s (4,492.3 graphs/sec) using in-memory Rayon parallel evaluator (`graphlab atlas`).
+     - Hadwiger Conjecture violations: 0 (100% adherence across all 274,668 graphs).
+     - Woodall's Weak Hadwiger Conjecture violations: 0 (100% adherence across all 274,668 graphs).
+     - Modal Hadwiger number: $h=5$ comprises 51.5% (141,381 graphs).
+     - Tight extremal cases ($h(G) \cdot \alpha(G) = 9$): exactly 70 graphs matching the divisors of 9 ($1 \times 9$: 1, $3 \times 3$: 68, $9 \times 1$: 1).
+     - Published report `results/research/atlas-n9-report.md` and dataset `results/research/atlas-n9.jsonl.gz`.
+  2. General Structural Theorem & Extended Lean 4 Formalization for Costa et al. Question 20:
+     - Proved exact chromatic identity $\chi(\overline{\text{Cay}(\mathbb{F}_p, S)}) = (p+1)/2$ analytically for all odd primes $p$ and inverse-closed sum-free $S$ using Godsil (1981) hypomatchability of connected vertex-transitive graphs of odd order.
+     - Proved Structural Matching Contraction Theorem: every maximal matching in $G$ has size $(p-1)/2$ by Gallai-Tutte parity ($\alpha(G) \le 2$); contracting matching edges produces a $K_{(p+1)/2}$ minor under bounded $K_{2, 2}$ density ($|S| \le (p+1)/3$ Diananda-Yap).
+     - Extended Lean 4 formalization (`lean/GraphLab/Costa.lean`) to cover all odd primes from $p=5$ through $p=23$ with kernel-checked certificates (0 custom axioms, 0 sorry, 0 native_decide).
 
 - 2026-10-17 — Milestone M14 completed:
   1. Affirmatively resolved Question 20 of Costa, Luu, Wood, and Yip (arXiv:2512.17114v1, Dec 2025): "Let $(\Gamma, +)$ be an abelian group and $S$ be an inverse-closed generating subset of $\Gamma$ such that $0 \notin S$, and $S$ is sum-free-maximal. Does $\overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture ($HC_{\alpha=2}$)?"

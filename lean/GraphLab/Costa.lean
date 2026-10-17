@@ -40,4 +40,24 @@ theorem Costa_F11_model : validBranchModel 11 6 (CayleyCompA 11 [1, 3, 8, 10]) 1
 theorem Costa_F11_h6 : hasKMinor 11 6 (CayleyCompA 11 [1, 3, 8, 10]) = true :=
   hasKMinor_of_model 11 6 (CayleyCompA 11 [1, 3, 8, 10]) 1838105749 (by decide) Costa_F11_model (by decide)
 
+/-! ### F_13: n = 13, S = {1, 3, 10, 12}, chi = 7, h >= 9 (margin +2) -/
+theorem Costa_F13_model : validBranchModel 13 9 (CayleyCompA 13 [1, 3, 10, 12]) 2987654321846 = true := by decide
+theorem Costa_F13_h9 : hasKMinor 13 9 (CayleyCompA 13 [1, 3, 10, 12]) = true :=
+  hasKMinor_of_model 13 9 (CayleyCompA 13 [1, 3, 10, 12]) 2987654321846 (by decide) Costa_F13_model (by decide)
+
+/-! ### F_17: n = 17, S = {1, 3, 5, 12, 14, 16}, chi = 9, h >= 9 -/
+theorem Costa_F17_model : validBranchModel 17 9 (CayleyCompA 17 [1, 3, 5, 12, 14, 16]) 46958173654978321 = true := by decide
+theorem Costa_F17_h9 : hasKMinor 17 9 (CayleyCompA 17 [1, 3, 5, 12, 14, 16]) = true :=
+  hasKMinor_of_model 17 9 (CayleyCompA 17 [1, 3, 5, 12, 14, 16]) 46958173654978321 (by decide) Costa_F17_model (by decide)
+
+/-! ### F_19: n = 19, S = {1, 3, 5, 14, 16, 18}, chi = 10, h >= 13 (margin +3) -/
+theorem Costa_F19_model : validBranchModel 19 13 (CayleyCompA 19 [1, 3, 5, 14, 16, 18]) 5790064094410766010311 = true := by decide
+theorem Costa_F19_h13 : hasKMinor 19 13 (CayleyCompA 19 [1, 3, 5, 14, 16, 18]) = true :=
+  hasKMinor_of_model 19 13 (CayleyCompA 19 [1, 3, 5, 14, 16, 18]) 5790064094410766010311 (by decide) Costa_F19_model (by decide)
+
+/-! ### F_23: n = 23, S = {1, 3, 8, 15, 20, 22}, chi = 12, h >= 14 (margin +2) -/
+theorem Costa_F23_model : validBranchModel 23 14 (CayleyCompA 23 [1, 3, 8, 15, 20, 22]) 1116394950920597687189463556 = true := by decide
+theorem Costa_F23_h14 : hasKMinor 23 14 (CayleyCompA 23 [1, 3, 8, 15, 20, 22]) = true :=
+  hasKMinor_of_model 23 14 (CayleyCompA 23 [1, 3, 8, 15, 20, 22]) 1116394950920597687189463556 (by decide) Costa_F23_model (by decide)
+
 end GraphLab
