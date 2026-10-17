@@ -18,9 +18,20 @@ the remote SHA below. Do not trust remembered state.
 | M10 | complete multipartite & universal apex theorems | PASS | 2b3c3de | 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
 | M11 | n=8 atlas + engine enum scaling (n<=8) | PASS | 4764fea | 4764feaa3b9652601feafaf1991b1afce1f2b250 | results/research/atlas-n8.jsonl (all 12346 classes), results/research/atlas-n8-report.md, crates/graphlab-core/src/enumerate.rs, scripts/generate_atlas_n8.py |
 | M12 | Turán & Cartesian product Hadwiger theorems | PASS | fa6199a | fa6199ad68a95c63be20bbf6d94c46d0253b40be | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
+| M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | PENDING | PENDING | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
 
 ## Decisions log
 
+- 2026-10-17 — Milestone M13 completed:
+  1. Engine enumeration scaled to $n = 9$ (274,668 non-isomorphic graphs generated and canonicalized in 2.25s, pinned OEIS A000088). Stratified Hadwiger and Weak Hadwiger verification sampled across $n=9$ space confirms 100% adherence (0 violations).
+  2. Torus Grids $C_a \square C_b$ classified: $h(C_3 \square C_3) = 5$ on $n=9, m=18$, formalized in Lean 4 (`lean/GraphLab/Grid.lean`) with kernel certificate `TorusGrid_3_3_model` (code `9676411`, 0 axioms, 0 sorry, 0 native_decide).
+  3. SAT Minor Solver (`hadwiger_sat.rs`): CDCL-based exact complete minor solver breaking the $n \le 10$ barrier. Employs root symmetry breaking, DAG parent order-encoding, and degree-pigeonhole pruning.
+  4. Exact Benchmark Classifications for $n > 10$:
+     - Grötzsch Graph ($n=11, m=20, \chi=4$): $h = 6$ (margin $+2$).
+     - Chvátal Graph ($n=12, m=24, \chi=4$): $h = 6$ (margin $+2$).
+     - Clebsch Graph ($n=16, m=40, \chi=4$): $h = 8$ (margin $+4$).
+     - Hypercube $Q_4$ ($n=16, m=32, \chi=2$): $h = 6$ (margin $+4$).
+  All certified models independently checked by `check_branch_model`. Automatic CLI routing via `graphlab hadwiger --sat` and for any graph with $n > 10$.
 - 2026-10-17 — Turán Hadwiger Theorem proved in closed form h(T(n, r)) = floor((n + r)/2) for all n >= r >= 2; part-separation bound 1 + n - ceil(n/r) universally dominates parity pairing bound. Cartesian grid P_a □ P_b, cylinder C_a □ P_b, and hypercube Q_d Hadwiger numbers classified and certified in Lean 4 with 0 axioms / 0 sorry.
 - 2026-10-16 — Repo lives at `/mnt/ai-storage/ai-workspace/repos/graph-lab`
   (NVMe, 633G free). Root disk is 80% full; avoided.

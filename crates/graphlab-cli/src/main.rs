@@ -56,12 +56,15 @@ enum Cmd {
         #[arg(long)]
         decode: Option<String>,
     },
-    /// Exact Hadwiger number h(G) (K_t minor search, n <= 10)
+    /// Exact Hadwiger number h(G) (K_t minor search; branch-set for n <= 10, or --sat for any n <= 64)
     Hadwiger {
         #[arg(long)]
         input: String,
         #[arg(long)]
         json: bool,
+        /// Use CDCL SAT minor solver (supports n > 10)
+        #[arg(long)]
+        sat: bool,
     },
     /// Run a campaign (TOML) over its declared domain
     Search {
@@ -351,20 +354,40 @@ fn main() -> Result<()> {
             println!("{re}");
             Ok(())
         }
-        Cmd::Hadwiger { input, json } => {
+        Cmd::Hadwiger { input, json, sat } => {
             let g = parse_graph_input(&input)?;
-            let h = match graphlab_core::hadwiger::hadwiger_number(&g) {
-                Ok(h) => h,
-                Err(e) => {
-                    eprintln!("graphlab hadwiger: {e}");
-                    std::process::exit(7);
-                }
+            let (h, model) = if sat || g.num_vertices() > graphlab_core::hadwiger::HADWIGER_MAX_N {
+                let h = match graphlab_core::hadwiger_sat::hadwiger_number_sat(&g) {
+                    Ok(h) => h,
+                    Err(e) => {
+                        eprintln!("graphlab hadwiger (sat): {e}");
+                        std::process::exit(7);
+                    }
+                };
+                let m = graphlab_core::hadwiger_sat::find_branch_model_sat(&g, h)
+                    .ok()
+                    .flatten();
+                (h, m)
+            } else {
+                let h = match graphlab_core::hadwiger::hadwiger_number(&g) {
+                    Ok(h) => h,
+                    Err(e) => {
+                        eprintln!("graphlab hadwiger: {e}");
+                        std::process::exit(7);
+                    }
+                };
+                let m = graphlab_core::hadwiger::find_branch_model(&g, h);
+                (h, m)
             };
             if json {
                 let v = serde_json::json!({
-                    "graph6": g6::encode_graph6(&g), "hadwiger": h,
+                    "graph6": g6::encode_graph6(&g),
+                    "hadwiger": h,
+                    "branch_model": model,
                     "chi": graphlab_core::invariants::chromatic_number(&g),
-                    "n": g.num_vertices(), "m": g.edge_count(),
+                    "n": g.num_vertices(),
+                    "m": g.edge_count(),
+                    "solver": if sat || g.num_vertices() > graphlab_core::hadwiger::HADWIGER_MAX_N { "sat_cdcl" } else { "branch_set_exact" },
                 });
                 println!("{}", serde_json::to_string_pretty(&v)?);
             } else {

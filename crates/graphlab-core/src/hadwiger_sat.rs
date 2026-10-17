@@ -25,7 +25,7 @@ pub fn has_kminor_sat(g: &Graph, t: usize) -> Result<bool, HadwigerSatError> {
 }
 
 /// Compute the exact Hadwiger number h(G) of graph G using SAT minor tests.
-/// Starts at the theoretical edge-count upper bound and tests downward.
+/// Searches upwards from t = 1 to the theoretical upper bound; stops at the first UNSAT.
 pub fn hadwiger_number_sat(g: &Graph) -> Result<usize, HadwigerSatError> {
     let n = g.num_vertices();
     if n == 0 {
@@ -38,15 +38,27 @@ pub fn hadwiger_number_sat(g: &Graph) -> Result<usize, HadwigerSatError> {
     }
     ub = ub.min(n);
 
-    for t in (1..=ub).rev() {
+    let max_deg = (0..n)
+        .map(|v| (0..n).filter(|&u| g.has_edge(v, u)).count())
+        .max()
+        .unwrap_or(0);
+
+    let mut best_t = 1;
+    for t in 2..=ub {
+        if max_deg + 1 < t && t > n / 2 {
+            break;
+        }
         if has_kminor_sat(g, t)? {
-            return Ok(t);
+            best_t = t;
+        } else {
+            break;
         }
     }
-    Ok(1)
+    Ok(best_t)
 }
 
 /// Find a constructive branch-set certificate for a K_t minor in G using SAT.
+#[allow(clippy::needless_range_loop)]
 pub fn find_branch_model_sat(g: &Graph, t: usize) -> Result<Option<Vec<usize>>, HadwigerSatError> {
     let n = g.num_vertices();
     if t == 0 || t > n {
@@ -62,6 +74,17 @@ pub fn find_branch_model_sat(g: &Graph, t: usize) -> Result<Option<Vec<usize>>, 
     }
     let m = g.edge_count();
     if m < t * (t - 1) / 2 {
+        return Ok(None);
+    }
+
+    // Degree bound pruning:
+    // If max_deg < t - 1 and t > n / 2, at least one branch must be a singleton,
+    // which has degree <= max_deg < t - 1, unable to connect to all t - 1 other branches.
+    let max_deg = (0..n)
+        .map(|v| (0..n).filter(|&u| g.has_edge(v, u)).count())
+        .max()
+        .unwrap_or(0);
+    if max_deg + 1 < t && t > n / 2 {
         return Ok(None);
     }
 
@@ -193,7 +216,11 @@ pub fn find_branch_model_sat(g: &Graph, t: usize) -> Result<Option<Vec<usize>>, 
                     let mut in_branch = vec![p_vu.negative()];
                     for k in 0..t {
                         in_branch.push(x[v][k].positive());
-                        solver.add_clause(&[p_vu.negative(), x[v][k].negative(), x[u][k].positive()]);
+                        solver.add_clause(&[
+                            p_vu.negative(),
+                            x[v][k].negative(),
+                            x[u][k].positive(),
+                        ]);
                     }
                     solver.add_clause(&in_branch);
 
@@ -202,7 +229,11 @@ pub fn find_branch_model_sat(g: &Graph, t: usize) -> Result<Option<Vec<usize>>, 
                     solver.add_clause(&[p_vu.negative(), d[v][0].positive()]);
                     // dist(u) >= l + 1 implies dist(v) >= l + 2
                     for l in 0..(max_depth - 1) {
-                        solver.add_clause(&[p_vu.negative(), d[u][l].negative(), d[v][l + 1].positive()]);
+                        solver.add_clause(&[
+                            p_vu.negative(),
+                            d[u][l].negative(),
+                            d[v][l + 1].positive(),
+                        ]);
                     }
                     // dist(u) cannot be >= max_depth if it is a parent
                     solver.add_clause(&[p_vu.negative(), d[u][max_depth - 1].negative()]);

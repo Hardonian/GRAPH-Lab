@@ -78,6 +78,17 @@ fn hadwiger_petersen_is_5() {
 }
 
 #[test]
+fn hadwiger_sat_groetzsch_is_6() {
+    let o = args(&["hadwiger", "--input", "JkLTAQGK?N_", "--json"]);
+    assert!(o.status.success(), "{:?}", o);
+    let v: serde_json::Value = serde_json::from_slice(&o.stdout).unwrap();
+    assert_eq!(v["hadwiger"], 6);
+    assert_eq!(v["n"], 11);
+    assert_eq!(v["solver"], "sat_cdcl");
+    assert!(v["branch_model"].is_array());
+}
+
+#[test]
 fn search_baseline_produces_replayable_witnesses() {
     let dir = std::env::temp_dir();
     let out = dir.join("cli-test-baseline.jsonl");
