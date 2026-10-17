@@ -4,6 +4,11 @@ Every candidate: exact statement, source, domain, engine status, rank with
 reasons. Repository metadata alone never proves "open" — sources below were
 checked individually. Status labels follow docs/PROOF_TRUST_MODEL.md.
 
+**M5 outcome (2026-10-16): C4's guessed pattern `h(CP(t)) = t+1` is FALSE.**
+Measured values are `h(CP(t)) = t + floor(t/2)` for t = 2..5 (3, 4, 6, 7).
+Full report: `results/research/M5-report.md`. C4 is now a 4-point conjecture,
+not a theorem. C1/C2/C3 unchanged and still open.
+
 ## Ranking criteria
 
 feasibility (can our exact engines touch it within scope n≤10-ish),
