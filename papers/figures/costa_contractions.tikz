@@ -1,0 +1,34 @@
+\begin{tikzpicture}[scale=0.9, every node/.style={circle, draw=black!80, inner sep=1.5pt, font=\scriptsize, font=\bfseries}]
+  % F_5 matching contraction into K_3
+  \begin{scope}[shift={(0,0)}]
+    \node[fill=red!40] (v0) at (90:1.6cm) {0};
+    \node[fill=blue!40] (v1) at (18:1.6cm) {1};
+    \node[fill=green!40] (v2) at (306:1.6cm) {2};
+    \node[fill=blue!40] (v3) at (234:1.6cm) {3};
+    \node[fill=green!40] (v4) at (162:1.6cm) {4};
+
+    \draw[thick, blue!80, line width=1.5pt] (v1) -- (v3);
+    \draw[thick, green!80, line width=1.5pt] (v2) -- (v4);
+    \draw[gray!70] (v0) -- (v2);
+    \draw[gray!70] (v0) -- (v3);
+    \draw[gray!70] (v1) -- (v4);
+
+    \node[draw=none, below] at (0,-2.0) {$\mathbb{F}_5$ Complement: $K_3$ minor};
+  \end{scope}
+
+  % F_7 matching contraction into K_5
+  \begin{scope}[shift={(5.5,0)}]
+    \node[fill=red!40] (u0) at (90:1.6cm) {0};
+    \node[fill=blue!40] (u1) at (38.5:1.6cm) {1};
+    \node[fill=orange!40] (u2) at (347:1.6cm) {2};
+    \node[fill=purple!40] (u3) at (295.5:1.6cm) {3};
+    \node[fill=teal!40] (u4) at (244:1.6cm) {4};
+    \node[fill=blue!40] (u5) at (193:1.6cm) {5};
+    \node[fill=purple!40] (u6) at (141.5:1.6cm) {6};
+
+    \draw[thick, blue!80, line width=1.5pt] (u1) -- (u5);
+    \draw[thick, purple!80, line width=1.5pt] (u3) -- (u6);
+
+    \node[draw=none, below] at (0,-2.0) {$\mathbb{F}_7$ Complement: $K_5$ minor ($h=5 > \chi=4$)};
+  \end{scope}
+\end{tikzpicture}

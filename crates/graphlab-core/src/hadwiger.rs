@@ -496,6 +496,70 @@ fn check(g: &Graph, assign: &[usize], t: usize) -> bool {
     check_branch_model(g, assign, t)
 }
 
+/// Convert a branch-set assignment on n vertices into the base-(t+1) natural number code
+/// used in Lean 4 kernel verification (`GraphLab.validBranchModel`).
+pub fn branch_model_to_lean_code(assign: &[usize], t: usize) -> String {
+    let base = (t + 1) as u32;
+    let mut big_digits: Vec<u32> = Vec::new();
+
+    // Digits d_i: 0 for DELETED, p + 1 for part p in 0..t
+    // code = sum_{i=0..n-1} d_i * (t + 1)^i
+    // Evaluated via Horner's rule from highest vertex down to 0:
+    for &p in assign.iter().rev() {
+        let add = if p == DELETED { 0 } else { (p + 1) as u32 };
+        let mut carry = add as u64;
+        for d in big_digits.iter_mut() {
+            let cur = (*d as u64) * (base as u64) + carry;
+            *d = (cur % 1_000_000_000) as u32;
+            carry = cur / 1_000_000_000;
+        }
+        while carry > 0 {
+            big_digits.push((carry % 1_000_000_000) as u32);
+            carry /= 1_000_000_000;
+        }
+    }
+
+    if big_digits.is_empty() {
+        return "0".to_string();
+    }
+
+    let mut s = String::new();
+    let mut first = true;
+    for &d in big_digits.iter().rev() {
+        if first {
+            s.push_str(&d.to_string());
+            first = false;
+        } else {
+            s.push_str(&format!("{:09}", d));
+        }
+    }
+    s
+}
+
+/// Generate a complete, ready-to-verify Lean 4 kernel certificate for a graph and its branch model.
+pub fn generate_lean_certificate(g: &Graph, name: &str, t: usize, assign: &[usize]) -> String {
+    let n = g.num_vertices();
+    let code = branch_model_to_lean_code(assign, t);
+    let mut edges = Vec::new();
+    for u in 0..n {
+        for v in (u + 1)..n {
+            if g.has_edge(u, v) {
+                edges.push(format!("({}, {})", u, v));
+            }
+        }
+    }
+    let edges_str = edges.join(", ");
+
+    format!(
+        "def {name}_edges : List (Nat × Nat) := [{edges_str}]\n\n\
+         def {name}_A : Matrix := fun u v =>\n  \
+           {name}_edges.contains (u, v) || {name}_edges.contains (v, u)\n\n\
+         theorem {name}_model : validBranchModel {n} {t} {name}_A {code} = true := by decide\n\
+         theorem {name}_h{t} : hasKMinor {n} {t} {name}_A = true :=\n  \
+           hasKMinor_of_model {n} {t} {name}_A {code} (by decide) {name}_model (by decide)\n"
+    )
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -761,5 +825,18 @@ mod tests {
         );
         let m = find_branch_model(&tg, 5).unwrap();
         assert!(check_branch_model(&tg, &m, 5));
+    }
+
+    #[test]
+    fn test_lean_certificate_generation() {
+        // K_4 with t=4: branch assignment [0, 1, 2, 3]
+        // code = 1 + 2*5 + 3*25 + 4*125 = 586
+        let k4 = k(4);
+        let assign = vec![0, 1, 2, 3];
+        assert_eq!(branch_model_to_lean_code(&assign, 4), "586");
+
+        let cert = generate_lean_certificate(&k4, "K4_test", 4, &assign);
+        assert!(cert.contains("validBranchModel 4 4 K4_test_A 586 = true"));
+        assert!(cert.contains("hasKMinor 4 4 K4_test_A = true"));
     }
 }

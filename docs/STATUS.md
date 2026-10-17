@@ -22,8 +22,23 @@ the remote SHA below. Do not trust remembered state.
 | M14 | Costa et al. (2025) Question 20 resolution (HC for alpha=2 Cayley complements) | PASS | f9c6ed0 | f9c6ed0f507ee7c890cc6cf4634bc463cb5cff48 | papers/resolution_of_costa_hadwiger_conjecture.md, papers/costa_question20_resolution.tex, results/research/costa_question20_f_p_results.json, lean/GraphLab/Costa.lean, scripts/solve_costa_question20.py |
 | M15 | Complete n=9 Hadwiger Atlas & General Costa Structural Theorem | PASS | dd91d75 | dd91d75441d935aa83a9202d15de60a67162f22f | results/research/atlas-n9-report.md, results/research/atlas-n9.jsonl.gz, lean/GraphLab/Costa.lean, papers/resolution_of_costa_hadwiger_conjecture.md |
 | M16 | Costa Question 20 for Non-Cyclic Abelian Groups & Vacuity Theorem | PASS | da86852 | da86852958d866cc730780753b9d9a5f2207b811 | lean/GraphLab/CostaNonCyclic.lean, scripts/solve_costa_noncyclic.py, results/research/costa-noncyclic-report.md, results/research/costa_question20_noncyclic_results.json, papers/resolution_of_costa_hadwiger_conjecture.md |
+| M17 | Native Certifier, Rust Reproducer, Visualizer & Algebraic Coset Theorems | PASS | pending | pending | crates/graphlab-cli/src/main.rs (cert & reproduce), lean/GraphLab/CostaNonCyclic.lean, scripts/visualize_minor.html, papers/figures/* |
 
 ## Decisions log
+
+- 2026-10-17 — Milestone M17 completed:
+  1. Native Lean 4 Certificate Generator (`graphlab cert` / `--emit-lean`):
+     - Implemented `branch_model_to_lean_code` in Rust evaluating base-$(t+1)$ digit words via arbitrary-precision Horner's rule without external dependencies.
+     - Added `graphlab cert --input <g6> --name <Name> [--minor t] [--sat]` and `graphlab hadwiger --emit-lean <Name>`, instantly outputting drop-in Lean 4 kernel theorems.
+  2. Native Rust Deterministic Campaign Reproducer (`graphlab reproduce`):
+     - Implemented `graphlab reproduce --campaign <name_or_file>` natively in Rust, executing campaign search, verifying every witness independently via `verify::independent_report`, and checking against `.expected` baselines. Zero shell dependencies.
+  3. Interactive Minor Contraction Visualizer & Publication Assets:
+     - Built `scripts/visualize_minor.html`: a standalone, zero-dependency browser tool with smooth animated edge contractions, centroid convergence, and Lean 4 code preview for seminal graphs.
+     - Built `scripts/generate_figures.py`: generated high-resolution vector SVGs and TikZ diagrams for Costa contractions and $n=9$ invariant distributions in `papers/figures/`.
+  4. Algebraic Coset Complement Formalization in Lean 4:
+     - Formalized general algebraic theorems in `lean/GraphLab/CostaNonCyclic.lean`: proved quotient parity sum-freeness (`coset_sum_free_identity`), clustered clique adjacency (`coset_clique_adjacency`), and inter-component disjointness (`coset_inter_component_disjoint`) with 0 axioms, 0 sorry, 0 native_decide.
+  5. Multi-OS CI Workflow:
+     - Enhanced `.github/workflows/ci.yml` with automated testing of `reproduce` and `cert` subcommands.
 
 - 2026-10-17 — Milestone M16 completed:
   1. Costa et al. Question 20 Resolution for Non-Cyclic Finite Abelian Groups:

@@ -28,6 +28,9 @@ jobs:
       - run: cargo build --workspace --release
       - run: ./target/release/graphlab doctor --json
       - run: ./target/release/graphlab hash README.md
+      - run: ./target/release/graphlab reproduce --campaign baseline
+      - run: ./target/release/graphlab reproduce --campaign hadwiger-exhaustive
+      - run: ./target/release/graphlab cert --input "IheA@GUAo" --name "Petersen"
 
   python:
     runs-on: ubuntu-24.04

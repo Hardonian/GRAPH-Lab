@@ -110,8 +110,11 @@ Every branch-set minor certificate is encoded as a compact base-$(t+1)$ integer 
 ## Delivered CLI & Engine Capabilities
 
 - `cargo run -p graphlab-cli -- doctor --json` — environment and toolchain diagnosis
-- `cargo run -p graphlab-cli -- enumerate N [--output file]` — exact unlabeled enumeration up to $n = 8$ (pinned OEIS A000088 sequence: `[1, 1, 2, 4, 11, 34, 156, 1044, 12346]`)
-- `cargo run -p graphlab-cli -- hadwiger --input <graph6> [--json]` — exact branch-set Hadwiger number $h(G)$ for $n \le 10$
+- `cargo run -p graphlab-cli -- cert --input <graph6> --name <Name> [--minor t] [--sat]` — generate drop-in Lean 4 kernel certificates
+- `cargo run -p graphlab-cli -- reproduce --campaign <name_or_file>` — native cross-platform campaign replay and witness verification
+- `cargo run -p graphlab-cli -- hadwiger --input <graph6> [--emit-lean <Name>] [--sat]` — exact Hadwiger number $h(G)$ with optional Lean 4 code emission
+- `cargo run -p graphlab-cli -- enumerate N [--output file]` — exact unlabeled enumeration up to $n = 9$ (pinned OEIS A000088 sequence)
+- `cargo run -p graphlab-cli -- atlas --vertices N [--threads T]` — high-speed in-memory invariant and Hadwiger atlas generation
 - `cargo run -p graphlab-cli -- canon --input <graph6>` / `--g6 --decode <s>` — Nauty/Traces canonical labeling
 - `cargo run -p graphlab-cli -- search --campaign <toml>` — deterministic witness search campaigns
 - `cargo run -p graphlab-cli -- minimize --witness <file> [--output <file>]` — size-decreasing witness reduction
@@ -119,6 +122,8 @@ Every branch-set minor certificate is encoded as a compact base-$(t+1)$ integer 
 - `cargo run -p graphlab-cli -- benchmark --threads N [--gpu-if-capable]` — high-throughput CPU/GPU benchmarking
 - `python/graphlab/` — Python control plane with independent NetworkX and igraph verification oracles
 - `lean/` — Lean 4 / Mathlib formalization with kernel-checked certificates
+- `scripts/visualize_minor.html` — interactive zero-dependency browser visualizer for minor contractions
+- `papers/figures/` — publication-ready vector figures (SVG and TikZ)
 - `scripts/verify.ps1` / `scripts/verify.sh` — 9-gate verification suite (fmt, clippy, test, release, cli-doctor, py-ruff, py-mypy, py-pytest, lean-audit)
 
 ---
@@ -126,15 +131,15 @@ Every branch-set minor certificate is encoded as a compact base-$(t+1)$ integer 
 ## Repository Layout
 
 ```text
-crates/graphlab-core/   Rust computational core (bitset graphs, branch sets, Nauty canonicalizer)
-crates/graphlab-cli/    graphlab CLI entry point
-papers/                 Professional research papers and LaTeX publications
+crates/graphlab-core/   Rust computational core (bitset graphs, branch sets, Nauty canonicalizer, SAT solver)
+crates/graphlab-cli/    graphlab CLI entry point (cert, reproduce, atlas, hadwiger, search, verify)
+papers/                 Professional research papers, LaTeX manuscripts, and vector figures
 python/graphlab/        Python control plane (NetworkX & igraph independent oracles)
-lean/                   Lean 4 project (kernel-checked decision procedures and certificates)
-results/research/       Empirical atlases (atlas-n7.jsonl, atlas-n8.jsonl) and research reports
+lean/                   Lean 4 project (kernel-checked decision procedures, certificates, algebraic proofs)
+results/research/       Empirical atlases (atlas-n7, atlas-n8, atlas-n9.jsonl.gz) and research reports
 campaigns/              Versioned campaign configurations
 docs/                   Architecture, status, proof trust model, research program
-scripts/                Verification gates (verify.ps1, verify.sh, lean_audit.py)
+scripts/                Verification gates (verify.ps1, verify.sh, lean_audit.py, generate_figures.py)
 ```
 
 ---

@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520" style="background-color:#0b0f19; font-family:system-ui, -apple-system, sans-serif;">
+<defs>
+  <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+    <feGaussianBlur stdDeviation="3" result="blur"/>
+    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+  </filter>
+</defs>
+<text x="480" y="38" fill="#f8fafc" font-size="21" font-weight="bold" text-anchor="middle">Branch-Set Minor Contractions in Sum-Free Cayley Complements</text>
+<text x="480" y="60" fill="#94a3b8" font-size="13" text-anchor="middle">Resolution of Costa, Luu, Wood, and Yip (2025) Question 20 (HC for α=2)</text>
+<rect x="25" y="85" width="290" height="400" rx="14" fill="#111827" stroke="#1f2937" stroke-width="1.5"/>
+<text x="170" y="118" fill="#38bdf8" font-size="16" font-weight="bold" text-anchor="middle">F_5 (n=5, χ=3, h=3)</text>
+<text x="170" y="138" fill="#94a3b8" font-size="12" text-anchor="middle">S = {1, 4} ⟹ G ≅ C_5 ⟹ K_3 minor</text>
+<line x1="170.0" y1="125.0" x2="214.1" y2="260.7" stroke="#374151" stroke-width="2"/>
+<line x1="170.0" y1="125.0" x2="125.9" y2="260.7" stroke="#374151" stroke-width="2"/>
+<line x1="241.3" y1="176.8" x2="125.9" y2="260.7" stroke="#374151" stroke-width="2"/>
+<line x1="241.3" y1="176.8" x2="98.7" y2="176.8" stroke="#374151" stroke-width="2"/>
+<line x1="214.1" y1="260.7" x2="98.7" y2="176.8" stroke="#374151" stroke-width="2"/>
+<line x1="241.3" y1="176.8" x2="125.9" y2="260.7" stroke="#3b82f6" stroke-width="4" stroke-linecap="round"/>
+<line x1="214.1" y1="260.7" x2="98.7" y2="176.8" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+<circle cx="170.0" cy="125.0" r="14" fill="#ef4444" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="170.0" y="129.0" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">0</text>
+<circle cx="241.3" cy="176.8" r="14" fill="#3b82f6" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="241.3" y="180.8" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">1</text>
+<circle cx="214.1" cy="260.7" r="14" fill="#10b981" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="214.1" y="264.7" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">2</text>
+<circle cx="125.9" cy="260.7" r="14" fill="#3b82f6" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="125.9" y="264.7" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">3</text>
+<circle cx="98.7" cy="176.8" r="14" fill="#10b981" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="98.7" y="180.8" fill="#ffffff" font-size="11" font-weight="bold" text-anchor="middle">4</text>
+<text x="170" y="325" fill="#e2e8f0" font-size="13" font-weight="bold" text-anchor="middle">Contraction Quotients:</text>
+<text x="170" y="348" fill="#ef4444" font-size="12" text-anchor="middle">Branch 0: {0} (singleton)</text>
+<text x="170" y="368" fill="#3b82f6" font-size="12" text-anchor="middle">Branch 1: {1, 3} (contracted edge)</text>
+<text x="170" y="388" fill="#10b981" font-size="12" text-anchor="middle">Branch 2: {2, 4} (contracted edge)</text>
+<rect x="70" y="415" width="200" height="42" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1"/>
+<text x="170" y="441" fill="#38bdf8" font-size="13" font-weight="bold" text-anchor="middle">K_3 Minor Certified (h=3)</text>
+<rect x="335" y="85" width="290" height="400" rx="14" fill="#111827" stroke="#1f2937" stroke-width="1.5"/>
+<text x="480" y="118" fill="#10b981" font-size="16" font-weight="bold" text-anchor="middle">F_7 (n=7, χ=4, h=5)</text>
+<text x="480" y="138" fill="#94a3b8" font-size="12" text-anchor="middle">S = {1, 6} ⟹ m=14 ⟹ Surplus Margin +1</text>
+<line x1="480.0" y1="122.0" x2="556.0" y2="217.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="480.0" y1="122.0" x2="513.8" y2="270.3" stroke="#374151" stroke-width="1.5"/>
+<line x1="480.0" y1="122.0" x2="446.2" y2="270.3" stroke="#374151" stroke-width="1.5"/>
+<line x1="480.0" y1="122.0" x2="404.0" y2="217.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="541.0" y1="151.4" x2="513.8" y2="270.3" stroke="#374151" stroke-width="1.5"/>
+<line x1="541.0" y1="151.4" x2="446.2" y2="270.3" stroke="#374151" stroke-width="1.5"/>
+<line x1="541.0" y1="151.4" x2="404.0" y2="217.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="541.0" y1="151.4" x2="419.0" y2="151.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="556.0" y1="217.4" x2="446.2" y2="270.3" stroke="#374151" stroke-width="1.5"/>
+<line x1="556.0" y1="217.4" x2="404.0" y2="217.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="556.0" y1="217.4" x2="419.0" y2="151.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="513.8" y1="270.3" x2="404.0" y2="217.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="513.8" y1="270.3" x2="419.0" y2="151.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="446.2" y1="270.3" x2="419.0" y2="151.4" stroke="#374151" stroke-width="1.5"/>
+<line x1="541.0" y1="151.4" x2="404.0" y2="217.4" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="513.8" y1="270.3" x2="419.0" y2="151.4" stroke="#f59e0b" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="480.0" cy="122.0" r="13" fill="#ef4444" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="480.0" y="126.0" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">0</text>
+<circle cx="541.0" cy="151.4" r="13" fill="#3b82f6" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="541.0" y="155.4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">1</text>
+<circle cx="556.0" cy="217.4" r="13" fill="#10b981" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="556.0" y="221.4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">2</text>
+<circle cx="513.8" cy="270.3" r="13" fill="#f59e0b" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="513.8" y="274.3" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">3</text>
+<circle cx="446.2" cy="270.3" r="13" fill="#8b5cf6" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="446.2" y="274.3" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">4</text>
+<circle cx="404.0" cy="217.4" r="13" fill="#3b82f6" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="404.0" y="221.4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">5</text>
+<circle cx="419.0" cy="151.4" r="13" fill="#f59e0b" stroke="#f8fafc" stroke-width="2" filter="url(#glow)"/>
+<text x="419.0" y="155.4" fill="#ffffff" font-size="10" font-weight="bold" text-anchor="middle">6</text>
+<text x="480" y="325" fill="#e2e8f0" font-size="13" font-weight="bold" text-anchor="middle">5 Contracted Branch Sets:</text>
+<text x="480" y="348" fill="#3b82f6" font-size="12" text-anchor="middle">Branch 1: {1, 5} | Branch 3: {3, 6}</text>
+<text x="480" y="368" fill="#ef4444" font-size="12" text-anchor="middle">Singletons: {0}, {2}, {4}</text>
+<text x="480" y="388" fill="#10b981" font-size="12" font-weight="bold" text-anchor="middle">All 10 Inter-Branch Pairs Adjacent</text>
+<rect x="380" y="415" width="200" height="42" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="1"/>
+<text x="480" y="441" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">K_5 Minor Certified (h=5 > χ=4)</text>
+<rect x="645" y="85" width="290" height="400" rx="14" fill="#111827" stroke="#1f2937" stroke-width="1.5"/>
+<text x="790" y="118" fill="#8b5cf6" font-size="16" font-weight="bold" text-anchor="middle">Z_2 × Z_6 (n=12, χ=6, h=7)</text>
+<text x="790" y="138" fill="#94a3b8" font-size="12" text-anchor="middle">Connected Class 2 (m=42) ⟹ Margin +1</text>
+<line x1="790.0" y1="120.0" x2="750.0" y2="269.3" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="830.0" y1="130.7" x2="720.7" y2="240.0" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="859.3" y1="160.0" x2="710.0" y2="200.0" stroke="#10b981" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="870.0" y1="200.0" x2="720.7" y2="160.0" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="859.3" y1="240.0" x2="750.0" y2="130.7" stroke="#8b5cf6" stroke-width="2.5" stroke-linecap="round"/>
+<circle cx="790.0" cy="120.0" r="10" fill="#ef4444" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="790.0" y="123.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">0</text>
+<circle cx="830.0" cy="130.7" r="10" fill="#3b82f6" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="830.0" y="133.7" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">1</text>
+<circle cx="859.3" cy="160.0" r="10" fill="#10b981" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="859.3" y="163.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">2</text>
+<circle cx="870.0" cy="200.0" r="10" fill="#f59e0b" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="870.0" y="203.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">3</text>
+<circle cx="859.3" cy="240.0" r="10" fill="#8b5cf6" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="859.3" y="243.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">4</text>
+<circle cx="830.0" cy="269.3" r="10" fill="#ec4899" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="830.0" y="272.3" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">5</text>
+<circle cx="790.0" cy="280.0" r="10" fill="#14b8a6" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="790.0" y="283.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">6</text>
+<circle cx="750.0" cy="269.3" r="10" fill="#ef4444" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="750.0" y="272.3" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">7</text>
+<circle cx="720.7" cy="240.0" r="10" fill="#3b82f6" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="720.7" y="243.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">8</text>
+<circle cx="710.0" cy="200.0" r="10" fill="#10b981" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="710.0" y="203.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">9</text>
+<circle cx="720.7" cy="160.0" r="10" fill="#f59e0b" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="720.7" y="163.0" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">10</text>
+<circle cx="750.0" cy="130.7" r="10" fill="#8b5cf6" stroke="#f8fafc" stroke-width="1.5"/>
+<text x="750.0" y="133.7" fill="#ffffff" font-size="8" font-weight="bold" text-anchor="middle">11</text>
+<text x="790" y="325" fill="#e2e8f0" font-size="13" font-weight="bold" text-anchor="middle">Non-Cyclic Contraction Model:</text>
+<text x="790" y="348" fill="#8b5cf6" font-size="12" text-anchor="middle">5 Mixed Pairs: {0,7}, {1,8}, {2,9}...</text>
+<text x="790" y="368" fill="#94a3b8" font-size="12" text-anchor="middle">2 Singletons: {5}, {6}</text>
+<text x="790" y="388" fill="#e2e8f0" font-size="12" text-anchor="middle">Total Branch Sets: 7 (Complete K_7)</text>
+<rect x="690" y="415" width="200" height="42" rx="8" fill="#1e293b" stroke="#8b5cf6" stroke-width="1"/>
+<text x="790" y="441" fill="#8b5cf6" font-size="13" font-weight="bold" text-anchor="middle">K_7 Minor Certified (h=7 > χ=6)</text>
+</svg>

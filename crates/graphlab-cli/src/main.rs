@@ -77,6 +77,27 @@ enum Cmd {
         /// Search for a specific complete minor K_t instead of finding max h(G)
         #[arg(long)]
         minor: Option<usize>,
+        /// Emit a Lean 4 kernel certificate with the given theorem/definition prefix
+        #[arg(long)]
+        emit_lean: Option<String>,
+    },
+    /// Generate a kernel-checked Lean 4 minor certificate for a graph
+    Cert {
+        #[arg(long)]
+        input: String,
+        #[arg(long)]
+        name: String,
+        /// Minor order t (defaults to exact Hadwiger number h(G))
+        #[arg(long)]
+        minor: Option<usize>,
+        /// Force SAT minor solver
+        #[arg(long)]
+        sat: bool,
+    },
+    /// Replay a recorded campaign deterministically in native Rust
+    Reproduce {
+        #[arg(long)]
+        campaign: String,
     },
     /// Run a campaign (TOML) over its declared domain
     Search {
@@ -476,6 +497,7 @@ fn main() -> Result<()> {
             json,
             sat,
             minor,
+            emit_lean,
         } => {
             let g = parse_graph_input(&input)?;
             if let Some(t) = minor {
@@ -491,6 +513,18 @@ fn main() -> Result<()> {
                     graphlab_core::hadwiger::find_branch_model(&g, t)
                 };
                 let has = model.is_some();
+                if let Some(name) = emit_lean {
+                    if let Some(assign) = &model {
+                        let cert = graphlab_core::hadwiger::generate_lean_certificate(
+                            &g, &name, t, assign,
+                        );
+                        println!("{cert}");
+                        return Ok(());
+                    } else {
+                        eprintln!("graphlab hadwiger: graph does not contain a K_{t} minor to certify in Lean 4");
+                        std::process::exit(1);
+                    }
+                }
                 if json {
                     let v = serde_json::json!({
                         "graph6": g6::encode_graph6(&g),
@@ -531,6 +565,17 @@ fn main() -> Result<()> {
                 let m = graphlab_core::hadwiger::find_branch_model(&g, h);
                 (h, m)
             };
+            if let Some(name) = emit_lean {
+                if let Some(assign) = &model {
+                    let cert =
+                        graphlab_core::hadwiger::generate_lean_certificate(&g, &name, h, assign);
+                    println!("{cert}");
+                    return Ok(());
+                } else {
+                    eprintln!("graphlab hadwiger: no complete minor found to certify");
+                    std::process::exit(1);
+                }
+            }
             if json {
                 let v = serde_json::json!({
                     "graph6": g6::encode_graph6(&g),
@@ -546,6 +591,140 @@ fn main() -> Result<()> {
                 println!("{h}");
             }
             Ok(())
+        }
+        Cmd::Cert {
+            input,
+            name,
+            minor,
+            sat,
+        } => {
+            let g = parse_graph_input(&input)?;
+            let target_t = match minor {
+                Some(t) => t,
+                None => {
+                    if sat || g.num_vertices() > graphlab_core::hadwiger::HADWIGER_MAX_N {
+                        match graphlab_core::hadwiger_sat::hadwiger_number_sat(&g) {
+                            Ok(h) => h,
+                            Err(e) => {
+                                eprintln!("graphlab cert (sat): {e}");
+                                std::process::exit(7);
+                            }
+                        }
+                    } else {
+                        match graphlab_core::hadwiger::hadwiger_number(&g) {
+                            Ok(h) => h,
+                            Err(e) => {
+                                eprintln!("graphlab cert: {e}");
+                                std::process::exit(7);
+                            }
+                        }
+                    }
+                }
+            };
+            let model = if sat || g.num_vertices() > graphlab_core::hadwiger::HADWIGER_MAX_N {
+                graphlab_core::hadwiger_sat::find_branch_model_sat(&g, target_t)
+                    .ok()
+                    .flatten()
+            } else {
+                graphlab_core::hadwiger::find_branch_model(&g, target_t)
+            };
+            match model {
+                Some(assign) => {
+                    let cert = graphlab_core::hadwiger::generate_lean_certificate(
+                        &g, &name, target_t, &assign,
+                    );
+                    println!("{cert}");
+                    Ok(())
+                }
+                None => {
+                    eprintln!("graphlab cert: graph does not contain a K_{target_t} minor");
+                    std::process::exit(1);
+                }
+            }
+        }
+        Cmd::Reproduce { campaign } => {
+            let path = if std::path::Path::new(&campaign).exists() {
+                campaign.clone()
+            } else {
+                format!("campaigns/{campaign}.toml")
+            };
+            let text = std::fs::read_to_string(&path)
+                .with_context(|| format!("reading campaign file {path}"))?;
+            let c = match graphlab_core::campaign::Campaign::from_toml_str(&text) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("graphlab reproduce: {e}");
+                    std::process::exit(8);
+                }
+            };
+            let pred = match graphlab_core::predicates::predicate_from_str(&c.predicate) {
+                Ok(p) => p,
+                Err(e) => {
+                    eprintln!("graphlab reproduce: {e}");
+                    std::process::exit(8);
+                }
+            };
+            let threads = c.threads.unwrap_or(48).min(48);
+            let tmp_out = format!("results/tmp/repro-{}-{}.jsonl", c.name, std::process::id());
+            if let Some(dir) = std::path::Path::new(&tmp_out).parent() {
+                std::fs::create_dir_all(dir)?;
+            }
+            eprintln!("[reproduce] running campaign {} ({})", c.name, path);
+            let summary = match graphlab_core::campaign::run(&c, pred.as_ref(), threads, &tmp_out) {
+                Ok(s) => s,
+                Err(e) => {
+                    eprintln!("graphlab reproduce: {e}");
+                    let _ = std::fs::remove_file(&tmp_out);
+                    std::process::exit(9);
+                }
+            };
+            println!("{}", serde_json::to_string_pretty(&summary)?);
+
+            let content = std::fs::read_to_string(&tmp_out)?;
+            let mut n_wit = 0;
+            let mut fail = 0;
+            for line in content.lines() {
+                let line = line.trim();
+                if line.is_empty() || line.contains("\"rejected\"") || line.contains("\"manifest\"")
+                {
+                    continue;
+                }
+                let v: serde_json::Value = match serde_json::from_str(line) {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+                let w: graphlab_core::search::Witness = match serde_json::from_value(v) {
+                    Ok(w) => w,
+                    Err(_) => continue,
+                };
+                n_wit += 1;
+                if let Err(e) = graphlab_core::verify::independent_report(&w) {
+                    eprintln!("[reproduce] WITNESS {n_wit} FAILED INDEPENDENT VERIFY: {e}");
+                    fail += 1;
+                }
+            }
+            eprintln!("[reproduce] witnesses: {n_wit}, independent verify failures: {fail}");
+
+            let exp_path = format!("results/campaigns/{}.expected", c.name);
+            if std::path::Path::new(&exp_path).exists() {
+                let exp_str = std::fs::read_to_string(&exp_path)?.trim().to_string();
+                let expected: usize = exp_str.parse().unwrap_or(0);
+                if n_wit != expected {
+                    eprintln!("[reproduce] MISMATCH: got {n_wit} witnesses, expected {expected}");
+                    let _ = std::fs::remove_file(&tmp_out);
+                    std::process::exit(4);
+                }
+                eprintln!("[reproduce] witness count matches recorded expectation ({expected})");
+            }
+
+            let _ = std::fs::remove_file(&tmp_out);
+            if fail == 0 {
+                eprintln!("[reproduce] OK");
+                Ok(())
+            } else {
+                eprintln!("[reproduce] FAILED");
+                std::process::exit(3);
+            }
         }
         Cmd::Search {
             campaign,

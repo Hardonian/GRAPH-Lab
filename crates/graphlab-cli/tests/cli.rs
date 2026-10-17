@@ -157,3 +157,26 @@ fn empty_witness_file_is_a_clean_failure_not_a_panic() {
     assert!(code != 0 && code < 128, "clean typed exit, got {code}");
     std::fs::remove_file(&f).ok();
 }
+
+#[test]
+fn cert_generates_valid_lean_code() {
+    let o = args(&["cert", "--input", "IheA@GUAo", "--name", "Petersen_test"]);
+    assert!(o.status.success(), "cert must succeed: {:?}", o);
+    let stdout = String::from_utf8_lossy(&o.stdout);
+    assert!(stdout.contains("def Petersen_test_edges"));
+    assert!(stdout.contains(
+        "theorem Petersen_test_model : validBranchModel 10 5 Petersen_test_A 40019695 = true"
+    ));
+    assert!(stdout.contains("theorem Petersen_test_h5 : hasKMinor 10 5 Petersen_test_A = true"));
+}
+
+#[test]
+fn reproduce_runs_and_verifies_baseline() {
+    let toml = env!("CARGO_MANIFEST_DIR")
+        .replace("crates/graphlab-cli", "campaigns/baseline.toml")
+        .replace(r"crates\graphlab-cli", r"campaigns\baseline.toml");
+    let o = args(&["reproduce", "--campaign", &toml]);
+    assert!(o.status.success(), "reproduce must succeed: {:?}", o);
+    let stderr = String::from_utf8_lossy(&o.stderr);
+    assert!(stderr.contains("[reproduce] OK"));
+}
