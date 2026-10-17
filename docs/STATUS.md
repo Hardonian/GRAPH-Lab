@@ -20,7 +20,7 @@ the remote SHA below. Do not trust remembered state.
 | M12 | Turán & Cartesian product Hadwiger theorems | PASS | fa6199a | fa6199ad68a95c63be20bbf6d94c46d0253b40be | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
 | M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | 5c541e9 | 5c541e9b4585d805d20ad0490c6447aba18dfa15 | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
 | M14 | Costa et al. (2025) Question 20 resolution (HC for alpha=2 Cayley complements) | PASS | f9c6ed0 | f9c6ed0f507ee7c890cc6cf4634bc463cb5cff48 | papers/resolution_of_costa_hadwiger_conjecture.md, papers/costa_question20_resolution.tex, results/research/costa_question20_f_p_results.json, lean/GraphLab/Costa.lean, scripts/solve_costa_question20.py |
-| M15 | Complete n=9 Hadwiger Atlas & General Costa Structural Theorem | PASS | pending | pending | results/research/atlas-n9-report.md, results/research/atlas-n9.jsonl.gz, lean/GraphLab/Costa.lean, papers/resolution_of_costa_hadwiger_conjecture.md |
+| M15 | Complete n=9 Hadwiger Atlas & General Costa Structural Theorem | PASS | dd91d75 | dd91d75441d935aa83a9202d15de60a67162f22f | results/research/atlas-n9-report.md, results/research/atlas-n9.jsonl.gz, lean/GraphLab/Costa.lean, papers/resolution_of_costa_hadwiger_conjecture.md |
 
 ## Decisions log
 
@@ -112,4 +112,4 @@ the remote SHA below. Do not trust remembered state.
 ## Remote
 
 - GitHub: [GRAPH-Lab](https://github.com/Hardonian/GRAPH-Lab) (PRIVATE), default branch main.
-- Latest verified remote SHA: e715ba17eb4dcfdbb5daee09e56f85ede095b30b.
+- Latest verified remote SHA: dd91d75441d935aa83a9202d15de60a67162f22f.
