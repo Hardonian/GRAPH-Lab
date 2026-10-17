@@ -1,10 +1,12 @@
 //! graphlab CLI.
 //!
-//! Commands implemented today (M0): `doctor`.
-//! Planned commands return a clean `not implemented` error with exit code 3
-//! — they are advertised in help only once they actually work.
+//! Implemented (M0/M1): doctor, hash, enumerate, invariants, canon, g6.
+//! Unimplemented commands (search/minimize/verify/formalize/verify-lean/
+//! benchmark) arrive in later milestones — they are NOT listed until they run.
 
+use anyhow::{Context, Result};
 use clap::{Parser, Subcommand};
+use graphlab_core::{canon, enumerate, g6, invariants};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 
@@ -21,13 +23,37 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Cmd {
-    /// Report host/toolchain/engine capabilities as JSON
+    /// Report host/toolchain/engine capabilities
     Doctor {
         #[arg(long)]
         json: bool,
     },
-    /// Print SHA-256 of a file (used by the evidence ledger)
+    /// Print SHA-256 of a file (evidence ledger primitive)
     Hash { path: String },
+    /// Enumerate unlabeled simple graphs on n vertices (exhaustive n <= 6)
+    Enumerate {
+        #[arg(long)]
+        vertices: usize,
+        #[arg(long)]
+        output: Option<String>,
+    },
+    /// Exact invariants of a graph (graph6 string, or '-' = stdin)
+    Invariants {
+        #[arg(long)]
+        input: String,
+        #[arg(long)]
+        json: bool,
+    },
+    /// Canonical-form certificate bytes (hex). Isomorphic iff equal.
+    Canon {
+        #[arg(long)]
+        input: String,
+    },
+    /// Validate + round-trip a graph6 string
+    G6 {
+        #[arg(long)]
+        decode: Option<String>,
+    },
 }
 
 #[derive(Serialize)]
@@ -35,6 +61,8 @@ struct Doctor {
     engine_version: &'static str,
     rust: String,
     max_vertices: usize,
+    exhaustive_enum_max_n: usize,
+    canon_fallback_max_vertices: usize,
     cpu_threads_available: usize,
     cpu_threads_default_budget: usize,
     cores: usize,
@@ -52,9 +80,8 @@ struct GpuTools {
 
 #[derive(Serialize)]
 struct ExternalBackends {
-    /// nauty/Traces arrive with the nauty-pet crate (compiled in), so this
-    /// reports the *system* binaries only (optional cross-check).
-    system_nauty_drg: bool,
+    /// nauty/Traces arrive vendored via nauty-pet (compiled in); this reports
+    /// optional *system* cross-check binaries only.
     lean: bool,
     z3: bool,
     cvc5: bool,
@@ -67,12 +94,6 @@ fn have(prog: &str) -> bool {
         .stderr(std::process::Stdio::null())
         .status()
         .is_ok()
-        || std::process::Command::new(prog)
-            .arg("-version")
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .status()
-            .is_ok()
 }
 
 fn nvcc_version() -> Option<String> {
@@ -99,57 +120,19 @@ fn mem_total_gib() -> u64 {
         .unwrap_or(0)
 }
 
-fn cmd_doctor(json: bool) -> anyhow::Result<()> {
-    let cores = std::thread::available_parallelism()
-        .map(|n| n.get())
-        .unwrap_or(1);
-    let budget = (cores * 3 / 4).max(1);
-    let disk = fsfree_gib(".");
-    let d = Doctor {
-        engine_version: env!("CARGO_PKG_VERSION"),
-        rust: rustc_version(),
-        max_vertices: graphlab_core::MAX_VERTICES,
-        cpu_threads_available: cores,
-        cpu_threads_default_budget: budget,
-        cores,
-        memory_total_gib: mem_total_gib(),
-        free_disk_repo_gib: disk,
-        gpu_tools: GpuTools {
-            nvidia_smi: have("nvidia-smi"),
-            nvcc: nvcc_version(),
-        },
-        external_backends: ExternalBackends {
-            system_nauty_drg: have("drg"),
-            lean: have("lean"),
-            z3: have("z3"),
-            cvc5: have("cvc5"),
-        },
-    };
-    if json {
-        println!("{}", serde_json::to_string_pretty(&d)?);
-    } else {
-        println!("graphlab doctor");
-        println!(
-            "  engine          : v{} (rust {})",
-            d.engine_version, d.rust
-        );
-        println!("  max vertices    : {}", d.max_vertices);
-        println!(
-            "  cpu threads     : {} (budget {})",
-            d.cpu_threads_available, d.cpu_threads_default_budget
-        );
-        println!("  memory          : {} GiB", d.memory_total_gib);
-        println!("  free disk (repo): {} GiB", d.free_disk_repo_gib);
-        println!("  nvidia-smi      : {}", d.gpu_tools.nvidia_smi);
-        println!(
-            "  nvcc            : {}",
-            d.gpu_tools.nvcc.as_deref().unwrap_or("absent")
-        );
-        println!("  lean            : {}", d.external_backends.lean);
-        println!("  z3              : {}", d.external_backends.z3);
-        println!("  cvc5            : {}", d.external_backends.cvc5);
-    }
-    Ok(())
+fn fsfree_gib(path: &str) -> u64 {
+    std::process::Command::new("df")
+        .arg("-BG")
+        .arg(path)
+        .output()
+        .ok()
+        .and_then(|o| {
+            let s = String::from_utf8_lossy(&o.stdout).to_string();
+            let line = s.lines().nth(1)?;
+            let avail = line.split_whitespace().nth(3)?;
+            avail.trim_end_matches('G').parse().ok()
+        })
+        .unwrap_or(0)
 }
 
 fn rustc_version() -> String {
@@ -160,34 +143,172 @@ fn rustc_version() -> String {
         .unwrap_or_else(|_| "unknown".into())
 }
 
-fn fsfree_gib(path: &str) -> u64 {
-    // statvfs via libc-free approach: parse `df` once.
-    let out = std::process::Command::new("df")
-        .arg("-BG")
-        .arg(path)
-        .output()
-        .ok();
-    out.and_then(|o| {
-        let s = String::from_utf8_lossy(&o.stdout).to_string();
-        let line = s.lines().nth(1)?;
-        let avail = line.split_whitespace().nth(3)?;
-        avail.trim_end_matches('G').parse().ok()
-    })
-    .unwrap_or(0)
+fn cmd_doctor(json: bool) -> Result<()> {
+    let cores = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1);
+    let d = Doctor {
+        engine_version: env!("CARGO_PKG_VERSION"),
+        rust: rustc_version(),
+        max_vertices: graphlab_core::MAX_VERTICES,
+        exhaustive_enum_max_n: enumerate::EXHAUSTIVE_MAX_N,
+        canon_fallback_max_vertices: canon::FALLBACK_MAX_VERTICES,
+        cpu_threads_available: cores,
+        cpu_threads_default_budget: (cores * 3 / 4).max(1),
+        cores,
+        memory_total_gib: mem_total_gib(),
+        free_disk_repo_gib: fsfree_gib("."),
+        gpu_tools: GpuTools {
+            nvidia_smi: have("nvidia-smi"),
+            nvcc: nvcc_version(),
+        },
+        external_backends: ExternalBackends {
+            lean: have("lean"),
+            z3: have("z3"),
+            cvc5: have("cvc5"),
+        },
+    };
+    if json {
+        println!("{}", serde_json::to_string_pretty(&d)?);
+    } else {
+        println!(
+            "graphlab v{} — caps: enum n<={}, canon fallback n<={}, graph n<={}",
+            d.engine_version,
+            d.exhaustive_enum_max_n,
+            d.canon_fallback_max_vertices,
+            d.max_vertices
+        );
+        println!(
+            "  lean:{} z3:{} cvc5:{} nvidia-smi:{} nvcc:{}",
+            d.external_backends.lean,
+            d.external_backends.z3,
+            d.external_backends.cvc5,
+            d.gpu_tools.nvidia_smi,
+            d.gpu_tools.nvcc.as_deref().unwrap_or("absent")
+        );
+    }
+    Ok(())
 }
 
-fn cmd_hash(path: &str) -> anyhow::Result<()> {
-    let bytes = std::fs::read(path)?;
+fn cmd_hash(path: &str) -> Result<()> {
+    let bytes = std::fs::read(path).with_context(|| format!("reading {path}"))?;
     let mut h = Sha256::new();
     h.update(&bytes);
     println!("{}", hex::encode(h.finalize()));
     Ok(())
 }
 
-fn main() -> anyhow::Result<()> {
+fn parse_graph_input(spec: &str) -> Result<graphlab_core::Graph> {
+    let raw = if spec == "-" {
+        let mut s = String::new();
+        std::io::Read::read_to_string(&mut std::io::stdin(), &mut s)?;
+        s
+    } else if std::path::Path::new(spec).exists() {
+        std::fs::read_to_string(spec).with_context(|| format!("reading {spec}"))?
+    } else {
+        // inline graph6 string
+        spec.to_string()
+    };
+    let line = raw
+        .lines()
+        .map(|l| l.trim())
+        .find(|l| !l.is_empty())
+        .context("no graph6 string found in input")?;
+    g6::decode_graph6(line).with_context(|| format!("decoding graph6 '{line}'"))
+}
+
+fn cmd_enumerate(vertices: usize, output: Option<String>) -> Result<()> {
+    let graphs = match enumerate::enumerate_unlabeled(vertices) {
+        Ok(g) => g,
+        Err(e) => {
+            eprintln!("graphlab enumerate: {e}");
+            std::process::exit(3);
+        }
+    };
+    let mut out: Box<dyn std::io::Write> = match &output {
+        Some(p) => Box::new(std::fs::File::create(p).with_context(|| format!("creating {p}"))?),
+        None => Box::new(std::io::stdout().lock()),
+    };
+    for g in &graphs {
+        let iv = invariants::all_invariants(g);
+        let s = g6::encode_graph6(g);
+        let line = serde_json::json!({"graph6": s, "invariants": iv});
+        writeln!(out, "{line}")?;
+    }
+    let expect = enumerate::KNOWN_UNLABELED_COUNTS
+        .get(vertices)
+        .map_or("?".to_string(), |c| c.to_string());
+    eprintln!(
+        "enumerated {} unlabeled graphs on {vertices} vertices (known count: {expect})",
+        graphs.len()
+    );
+    if enumerate::KNOWN_UNLABELED_COUNTS.get(vertices) == Some(&graphs.len()) {
+        eprintln!("count matches known sequence [EXACT_FINITE]");
+    } else {
+        eprintln!("WARNING: count does NOT match known sequence");
+    }
+    Ok(())
+}
+
+fn main() -> Result<()> {
     let cli = Cli::parse();
     match cli.cmd {
         Cmd::Doctor { json } => cmd_doctor(json),
         Cmd::Hash { path } => cmd_hash(&path),
+        Cmd::Enumerate { vertices, output } => cmd_enumerate(vertices, output),
+        Cmd::Invariants { input, json } => {
+            let g = parse_graph_input(&input)?;
+            let iv = invariants::all_invariants(&g);
+            if json {
+                println!("{}", serde_json::to_string_pretty(&iv)?);
+            } else {
+                println!(
+                    "n={} m={} deg={} comp={} conn={} tri={} c4={} omega={} alpha={} chi={} density={}/{}",
+                    iv.n,
+                    iv.m,
+                    serde_json::to_string(&iv.degree_sequence)?,
+                    iv.components,
+                    iv.connected,
+                    iv.triangles,
+                    iv.cycle4,
+                    iv.clique_number,
+                    iv.independence_number,
+                    iv.chromatic_number,
+                    iv.density_num,
+                    iv.density_den
+                );
+            }
+            Ok(())
+        }
+        Cmd::Canon { input } => {
+            let g = parse_graph_input(&input)?;
+            let bytes = match canon::canonical_bytes(&g) {
+                Ok(b) => b,
+                Err(e) => {
+                    eprintln!("graphlab canon: {e}");
+                    std::process::exit(4);
+                }
+            };
+            println!("{}", hex::encode(bytes));
+            Ok(())
+        }
+        Cmd::G6 { decode } => {
+            let s = decode.context("provide --decode <graph6>")?;
+            let s = s.trim_end_matches('\n').to_string();
+            let g = match g6::decode_graph6(&s) {
+                Ok(g) => g,
+                Err(e) => {
+                    eprintln!("invalid graph6: {e}");
+                    std::process::exit(5);
+                }
+            };
+            let re = g6::encode_graph6(&g);
+            if re != s {
+                eprintln!("graphlab g6: round-trip mismatch: in={s} out={re}");
+                std::process::exit(6);
+            }
+            println!("{re}");
+            Ok(())
+        }
     }
 }

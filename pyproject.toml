@@ -1,0 +1,33 @@
+[project]
+name = "graphlab"
+version = "0.1.0"
+description = "Python control plane for GRAPH Lab: campaign orchestration and independent oracles"
+requires-python = ">=3.11"
+dependencies = [
+    "networkx>=3.4",
+    "igraph>=0.11",
+    "pydantic>=2.9",
+    "tomlkit>=0.13",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6", "mypy>=1.13"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["python/graphlab"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+packages = ["graphlab"]
+mypy_path = "python"
+
+[[tool.mypy.overrides]]
+module = ["igraph.*", "networkx.*"]
+ignore_missing_imports = true

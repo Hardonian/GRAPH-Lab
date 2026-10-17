@@ -16,6 +16,9 @@ run "clippy"     cargo clippy --workspace --all-targets -- -D warnings
 run "test"       cargo test --workspace --all-targets
 run "release"    cargo build --workspace --release
 run "cli-doctor" ./target/release/graphlab doctor --json
+run "py-ruff"    uv run ruff check python tests
+run "py-mypy"    uv run mypy python/graphlab
+run "py-pytest"  uv run pytest -q
 
 if [ -d lean ]; then
   run "lean-build" bash -c 'cd lean && lake build'

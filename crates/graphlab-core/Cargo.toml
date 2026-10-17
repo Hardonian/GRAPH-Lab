@@ -12,6 +12,8 @@ anyhow = { workspace = true }
 graph6 = { workspace = true }
 hex = { workspace = true }
 indexmap = { workspace = true }
+nauty-pet = { version = "0.15.0", default-features = false }
+petgraph = "0.8.3"
 rand = { workspace = true }
 rand_chacha = { workspace = true }
 serde = { workspace = true }
