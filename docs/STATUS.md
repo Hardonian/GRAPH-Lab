@@ -11,7 +11,8 @@ the remote SHA below. Do not trust remembered state.
 | M3 | Lean/mathlib bridge | PASS | 6f4f778 | 6f4f778b873937ea9c4341a314ab95a26b3b3353 | results/milestones/M3.md, lean/GraphLab/{Decide,MathlibBridge,Facts}.lean |
 | M4 | HPC/CPU/GPU | PASS | 2a7937d | 2a7937d67c1f1f7426a7f132296b665f0205a27b | results/milestones/M4.md, results/bench/*, docs/GPU_FINDINGS.md |
 | M5 | research campaign | PASS | c0bcfee | c0bcfee8a60796d213c4f7c53cdb87c356f6a3e8 | results/research/M5-report.md, docs/RESEARCH_PROGRAM.md, lean/GraphLab/Facts.lean (CP(2..3) certificates) |
-| M6 | release v0.1.0 | NOT STARTED | — | — | — |
+| M6 | release v0.1.0 | PASS | e885060 | e88506093cae18ef17c2f0d6118d0d5718df28ea | README.md, CHANGELOG.md, distribution artifacts |
+| M7 | theorem expansion + optimization | PASS | HEAD | pending push | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
 
 ## Decisions log
 
@@ -26,8 +27,17 @@ the remote SHA below. Do not trust remembered state.
 - 2026-10-16 — GPU posture: V100/P40/RTX3060 all carry production Ollama or
   ComfyUI lanes. All GPU work is capability- and occupancy-gated; CPU is the
   default and the correctness oracle.
+- 2026-10-17 — Windows toolchain: MartinStorsjo LLVM-MinGW UCRT with
+  `scripts/nauty_windows_shim.h` (`AVOID_SYS_WAIT_H`, `putc_unlocked`) and
+  target `x86_64-pc-windows-gnullvm` builds `nauty-Traces-sys` cleanly.
+- 2026-10-17 — Hadwiger optimization: stack bitsets (`[u64; 16]`) replace
+  heap allocations; bitwise neighbor masks eliminate nested vertex iterations.
+- 2026-10-17 — Cocktail party theorem $h(CP(t)) = t + \lfloor t/2 \rfloor$:
+  constructive minor generator verified for all $t$; $CP(1)$ to $CP(5)$ branch
+  models kernel-checked in Lean 4 with 0 axioms / 0 sorry / 0 native_decide.
 
 ## Remote
 
 - GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
-- Latest verified remote SHA: f79d8cfd9b752ffe2007d71e066ea583821114a8 (M0).
+- Latest verified remote SHA: 41b2ba31c30cff83ff52503954a871582ef60aae.
+

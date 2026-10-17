@@ -53,11 +53,8 @@ example : ∀ i j : Fin 4, K4.Adj i j ↔ K4A i.val j.val = true :=
 /-- A valid branch-set model code below (t+1)^n certifies hasKMinor. -/
 theorem hasKMinor_of_model (n t : Nat) (A : Matrix) (code : Nat)
     (hlt : code < (t + 1) ^ n) (hm : validBranchModel n t A code = true)
-    (ht : 0 < t) : hasKMinor n t A = true := by
-  unfold hasKMinor
-  rw [if_neg (Nat.ne_of_gt ht)]
-  unfold hasKMinorScan allCodes
-  exact List.any_eq_true.mpr ⟨_, List.mem_range.mpr hlt, hm⟩
+    (ht : 0 < t) : hasKMinor n t A = true :=
+  GraphLab.hasKMinor_of_model n t A code hlt hm ht
 
 /-- hadwigerGo's value never exceeds its argument (structural). -/
 theorem hadwigerGo_le_arg (n : Nat) (A : Matrix) :

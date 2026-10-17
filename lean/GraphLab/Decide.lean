@@ -114,6 +114,16 @@ def hasKMinorScan (n t : Nat) (A : Matrix) : Bool :=
 def hasKMinor (n t : Nat) (A : Matrix) : Bool :=
   if t = 0 then false else hasKMinorScan n t A
 
+/-- A valid branch-set model code below (t+1)^n certifies hasKMinor. -/
+theorem hasKMinor_of_model (n t : Nat) (A : Matrix) (code : Nat)
+    (hlt : code < (t + 1) ^ n) (hm : validBranchModel n t A code = true)
+    (ht : 0 < t) : hasKMinor n t A = true := by
+  unfold hasKMinor
+  have ht0 : ¬ t = 0 := Nat.ne_of_gt ht
+  simp [ht0]
+  unfold hasKMinorScan allCodes
+  exact List.any_eq_true.mpr ⟨_, List.mem_range.mpr hlt, hm⟩
+
 /-- Hadwiger number via ascending structural search -/
 def hadwigerGo (n : Nat) (A : Matrix) : Nat → Nat
   | 0 => 0

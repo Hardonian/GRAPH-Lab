@@ -92,8 +92,12 @@ def main() -> int:
         return 1
     print(f"lean_audit: source scan clean ({len(files)} files, comments stripped)")
     if do_run:
-        env = dict(os.environ, PATH=str(Path.home() / ".elan/bin") + ":" + os.environ.get("PATH", ""))
-        r = subprocess.run(["lake", "build"], cwd=LEAN_DIR, env=env,
+        import shutil
+        elan_bin = str(Path.home() / ".elan/bin")
+        path_str = elan_bin + os.pathsep + os.environ.get("PATH", "")
+        env = dict(os.environ, PATH=path_str)
+        lake_cmd = shutil.which("lake", path=path_str) or "lake"
+        r = subprocess.run([lake_cmd, "build"], cwd=LEAN_DIR, env=env,
                            capture_output=True, text=True)
         if r.returncode != 0:
             print("lean_audit: lake build FAILED", file=sys.stderr)

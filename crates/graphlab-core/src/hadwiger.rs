@@ -55,6 +55,37 @@ pub fn hadwiger_number(g: &Graph) -> Result<usize, HadwigerError> {
 
 pub const DELETED: usize = usize::MAX;
 
+/// Generate the exact constructive branch-set certificate for the complete minor
+/// K_{t + floor(t/2)} of the cocktail party graph CP(t).
+pub fn cocktail_party_minor_model(t: usize) -> Vec<usize> {
+    if t == 0 {
+        return Vec::new();
+    }
+    let n = 2 * t;
+    let mut assign = vec![DELETED; n];
+    let k = t / 2;
+
+    for j in 0..k {
+        // Block j has matching pairs 2j ({4j, 4j+1}) and 2j+1 ({4j+2, 4j+3})
+        // Part 3*j: {4*j, 4*j + 2} (connected by edge in CP(t))
+        assign[4 * j] = 3 * j;
+        assign[4 * j + 2] = 3 * j;
+        // Part 3*j + 1: {4*j + 1}
+        assign[4 * j + 1] = 3 * j + 1;
+        // Part 3*j + 2: {4*j + 3}
+        assign[4 * j + 3] = 3 * j + 2;
+    }
+
+    if t % 2 != 0 {
+        // Leftover pair: {2t - 2, 2t - 1}
+        // Part 3*k: {2t - 2}
+        assign[2 * t - 2] = 3 * k;
+        // vertex 2t - 1 remains DELETED
+    }
+
+    assign
+}
+
 /// Is there a K_t minor? Restricted-growth branch-set search with deletion.
 pub fn has_kminor(g: &Graph, t: usize) -> Result<bool, HadwigerError> {
     let n = g.num_vertices();
@@ -130,59 +161,75 @@ fn complete_with_existing(g: &Graph, t: usize, v: usize, assign: &mut [usize]) -
     complete_with_existing(g, t, v + 1, assign)
 }
 
-fn check(g: &Graph, assign: &[usize], t: usize) -> bool {
-    let n = assign.len();
-    let mut sizes = vec![0usize; t];
-    for &p in assign {
-        if p == DELETED {
-            continue;
-        }
-        sizes[p] += 1;
-    }
-    if sizes.contains(&0) {
+/// Verify whether an assignment of vertices to branch sets 0..t certifies a K_t minor.
+/// Uses zero-allocation bitsets and bitwise BFS.
+pub fn check_branch_model(g: &Graph, assign: &[usize], t: usize) -> bool {
+    if t == 0 {
         return false;
     }
-    // pairwise adjacency between parts
-    for a in 0..t {
-        for b in (a + 1)..t {
-            let mut adj = false;
-            'e: for u in 0..n {
-                if assign[u] != a {
-                    continue;
-                }
-                for w in g.neighbors(u) {
-                    if assign[w] == b {
-                        adj = true;
-                        break 'e;
-                    }
-                }
+    if t > 16 {
+        return false;
+    }
+    let mut part_masks = [0u64; 16];
+    let mut part_neighbors = [0u64; 16];
+
+    for (v, &p) in assign.iter().enumerate() {
+        if p != DELETED {
+            if p >= t {
+                return false;
             }
-            if !adj {
+            part_masks[p] |= 1u64 << v;
+            part_neighbors[p] |= g.adjacency_row(v);
+        }
+    }
+
+    // 1. Every part must be nonempty
+    for &mask in part_masks.iter().take(t) {
+        if mask == 0 {
+            return false;
+        }
+    }
+
+    // 2. Pairwise adjacency between distinct parts:
+    // Part a is adjacent to part b iff neighbors of part a intersect part b.
+    for (a, &neighbors) in part_neighbors.iter().enumerate().take(t) {
+        for &b_mask in part_masks.iter().take(t).skip(a + 1) {
+            if (neighbors & b_mask) == 0 {
                 return false;
             }
         }
     }
-    // each part connected
-    for p in 0..t {
-        let members: Vec<usize> = (0..n).filter(|&v| assign[v] == p).collect();
-        let mut seen = vec![false; n];
-        let mut stack = vec![members[0]];
-        seen[members[0]] = true;
-        let mut cnt = 0usize;
-        while let Some(x) = stack.pop() {
-            cnt += 1;
-            for y in g.neighbors(x) {
-                if assign[y] == p && !seen[y] {
-                    seen[y] = true;
-                    stack.push(y);
-                }
+
+    // 3. Each part must be connected in G:
+    // Bitwise BFS inside the part
+    for &mask in part_masks.iter().take(t) {
+        let root = 1u64 << mask.trailing_zeros();
+        let mut reach = root;
+        loop {
+            let mut expanded = reach;
+            let mut frontier = reach;
+            while frontier != 0 {
+                let v = frontier.trailing_zeros() as usize;
+                frontier &= frontier - 1;
+                expanded |= g.adjacency_row(v);
             }
+            let next_reach = expanded & mask;
+            if next_reach == reach {
+                break;
+            }
+            reach = next_reach;
         }
-        if cnt != members.len() {
+        if reach != mask {
             return false;
         }
     }
+
     true
+}
+
+#[inline(always)]
+fn check(g: &Graph, assign: &[usize], t: usize) -> bool {
+    check_branch_model(g, assign, t)
 }
 
 #[cfg(test)]
@@ -268,5 +315,18 @@ mod tests {
         let mut b = a.clone();
         b.add_edge(0, 4).unwrap(); // + closing edge -> C5
         assert!(hadwiger_number(&b).unwrap() >= hadwiger_number(&a).unwrap());
+    }
+
+    #[test]
+    fn cocktail_party_constructive_minors_verified_for_all_t() {
+        for t in 1..=10usize {
+            let cp = Graph::cocktail_party(t).unwrap();
+            let s = t + t / 2;
+            let model = cocktail_party_minor_model(t);
+            assert!(
+                check_branch_model(&cp, &model, s),
+                "constructive minor failed for t={t}, target s={s}"
+            );
+        }
     }
 }

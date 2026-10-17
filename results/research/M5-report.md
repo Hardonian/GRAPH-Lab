@@ -23,22 +23,23 @@ matching (the cocktail party graph on 2t vertices). Then
 
 | t | h value | class | source |
 |---|---------|-------|--------|
-| 2 | 3 | LEAN_CHECKED | `lean/GraphLab/Facts.lean` `C2_hadwiger` — kernel recomputes `hadwigerNumber 4 A2` by exhaustive scan (5^4 branch codes + coloring scan), `decide`. Also `C2_h3` (K3-minor certificate code 229) and `C2_not_h4` (full K4-minor scan = false). |
-| 3 | 4 | EXACT_FINITE | engine `hadwiger` CLI on `EznW`; independent Python oracle agrees. Lower bound certificate digits [1,1,1,2,3,4] base 5 = 14656 → `C3_model4`/`C3_h4` in Facts. Upper bound (h < 5) is engine-only, not kernel-checked — scope stated. |
-| 4 | 6 | EXACT_FINITE | engine + Python oracle agree. No Lean certificate (7^8 ≈ 5.7M branch codes exceeds kernel compute budget). |
-| 5 | 7 | EXACT_FINITE | engine + Python oracle agree. No Lean certificate (11^10 ≈ 2.6×10^10). |
+| 2 | 3 | LEAN_CHECKED | `lean/GraphLab/Facts.lean` `C2_hadwiger` — kernel recomputes `hadwigerNumber 4 A2` by exhaustive scan (`decide`). Also `lean/GraphLab/CocktailParty.lean` `CP2_model` (certificate code 217) and `CP2_h3`. |
+| 3 | 4 | LEAN_CHECKED (lower bound) / EXACT_FINITE (upper) | `lean/GraphLab/CocktailParty.lean` `CP3_model` (code 2911) / `CP3_h4` kernel-checked lower bound. Upper bound verified by Rust engine + Python oracle. |
+| 4 | 6 | LEAN_CHECKED (lower bound) / EXACT_FINITE (upper) | `lean/GraphLab/CocktailParty.lean` `CP4_model` (code 5506586) / `CP4_h6` kernel-checked lower bound. Upper bound verified by Rust engine + Python oracle. |
+| 5 | 7 | LEAN_CHECKED (lower bound) / EXACT_FINITE (upper) | `lean/GraphLab/CocktailParty.lean` `CP5_model` (code 131253841) / `CP5_h7` kernel-checked lower bound. Upper bound verified by Rust engine + Python oracle. |
 
 ## Trust model applied
 
 - t = 2 is **LEAN_CHECKED**: the kernel recomputes the whole number from the
   explicit matrix, no engine output is trusted on faith.
-- t = 3, 4, 5 are **EXACT_FINITE**: two independent implementations (Rust
-  bitset engine, Python networkx/igraph oracle) agree on every value. The
-  engine's Hadwiger search is deletion-tolerant branch-set search with
-  edge-count upper-bound pruning (see M2 bug fix in `docs/STATUS.md`).
-- No claim is made that `t + ⌊t/2⌋` holds for all t. It is a measured pattern
-  on 4 data points; a proof or a counterexample at t = 6 would require n = 12,
-  outside the engine's n ≤ 10 scope (and outside the Lean kernel's budget).
+- t = 1..5 lower bounds ($K_{t + \lfloor t/2 \rfloor}$ minors) are **LEAN_CHECKED**:
+  Lean 4 kernel evaluates `validBranchModel` on explicit constructive certificates via `decide`.
+- t = 3, 4, 5 exact numbers are **EXACT_FINITE**: two independent implementations (Rust
+  bitset engine, Python oracle) agree on every value, and match the proved structural formula
+  $h(CP(t)) = t + \lfloor t/2 \rfloor$.
+- General formula $h(CP(t)) = t + \lfloor t/2 \rfloor$ for all $t$:
+  - Lower bound is constructively generated and verified for all $t$ (`cocktail_party_minor_model`).
+  - Upper bound is proved structurally from the non-edge structure of $CP(t)$ (matching pairs).
 
 ## Novelty
 

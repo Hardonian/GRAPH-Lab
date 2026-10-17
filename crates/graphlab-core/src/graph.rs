@@ -58,6 +58,24 @@ impl Graph {
         })
     }
 
+    /// Cocktail party graph CP(t) on 2t vertices: complete graph K_{2t} minus
+    /// the perfect matching {(2i, 2i+1) : i < t}.
+    pub fn cocktail_party(t: usize) -> Result<Self, GraphError> {
+        let n = 2 * t;
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        for i in 0..n {
+            for j in (i + 1)..n {
+                if !(i / 2 == j / 2 && i % 2 != j % 2) {
+                    g.add_edge(i, j)?;
+                }
+            }
+        }
+        Ok(g)
+    }
+
     /// Build from an edge list. Edges are validated; duplicates are merged.
     pub fn from_edges(n: usize, edges: &[(usize, usize)]) -> Result<Self, GraphError> {
         let mut g = Self::empty(n)?;
