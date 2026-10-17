@@ -35,15 +35,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
-      - run: uv sync --frozen 2>/dev/null || uv sync
-      - run: uv run ruff check python tests 2>/dev/null || true
-      - run: uv run pytest -q 2>/dev/null || echo "python layer not yet wired (M1+)"
+      - run: uv sync --frozen
+      - run: uv run ruff check python tests
+      - run: uv run mypy python/graphlab
+      - run: uv run pytest -q
 
   lean:
-    # Deterministic small build only; mathlib cache makes this bounded.
-    # Enabled at Milestone 3 when lean/ exists.
-    if: false
+    # Lean 4 / Mathlib gate: the kernel re-checks every certificate in
+    # lean/GraphLab/Facts.lean. Mathlib is pinned by lake-manifest.json;
+    # the cache download is bounded and the build is small (~800 jobs).
     runs-on: ubuntu-24.04
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
-      - run: echo "lean gate wired in M3"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install elan (Lean 4 toolchain)
+        run: |
+          curl -fsSL https://elan.lean-lang.org/install.sh | sh -s -- -y
+          echo "$HOME/.elan/bin" >> "$GITHUB_PATH"
+      - run: pip install tomli
+      - run: python3 scripts/lean_audit.py --run
