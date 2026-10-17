@@ -16,6 +16,7 @@ the remote SHA below. Do not trust remembered state.
 | M8 | n=7 atlas + parameterized CP proof | PASS | 785975b | 785975b851d3b2b695d0b8b59dcedccd2915cdf7 | results/research/atlas-n7.jsonl (all 1044 classes), results/research/atlas-n7-report.md, lean/GraphLab/CocktailParty.lean (cpBranchCode + CP6) |
 | M9 | complete bipartite Hadwiger theorem | PASS | 5784d35 | 5784d355ff469fc45e09365bf0bb07d76286595e | lean/GraphLab/CompleteBipartite.lean (K_{1,1}..K_{5,5} kernel certificates), crates/graphlab-core/src/hadwiger.rs (complete_bipartite_minor_model) |
 | M10 | complete multipartite & universal apex theorems | PASS | 2b3c3de | 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
+| M11 | n=8 atlas + engine enum scaling (n<=8) | PASS | HEAD | pending push | results/research/atlas-n8.jsonl (all 12346 classes), results/research/atlas-n8-report.md, crates/graphlab-core/src/enumerate.rs, scripts/generate_atlas_n8.py |
 
 ## Decisions log
 
@@ -57,6 +58,13 @@ the remote SHA below. Do not trust remembered state.
 - 2026-10-17 — Universal Apex Hadwiger Theorem: proved analytically that for any
   graph $G$, $h(G \star K_1) = h(G) + 1$, and $h(G \star K_k) = h(G) + k$. Formalized
   apex graph construction in Lean 4 with kernel-checked certificates for $W_5, F_5$.
+- 2026-10-17 — Engine enumeration scaling ($n \le 8$): replaced labeled brute force
+  with parallel inductive extension + Nauty canonicalization in `crates/graphlab-core/src/enumerate.rs`.
+  Enumerates all 12,346 non-isomorphic graphs at $n=8$ natively in under 2 seconds.
+- 2026-10-17 — Atlas $n=8$ & Woodall frontier: all 12,346 graphs evaluated in 60.85s.
+  Hadwiger holds 100% (0 violations). Weak Hadwiger holds 100% (0 violations).
+  Exactly 34 graphs are tight ($h \cdot \alpha = 8$), corresponding to the composite
+  divisors of 8 ($1 \times 8, 2 \times 4, 4 \times 2, 8 \times 1$).
 
 ## Remote
 

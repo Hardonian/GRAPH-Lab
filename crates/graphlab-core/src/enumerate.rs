@@ -12,12 +12,14 @@
 //! exact, not heuristic. For n > EXHAUSTIVE_MAX_N this module refuses rather
 //! than pretending coverage (future: geng via nauty backend — see STATUS).
 
+use rayon::prelude::*;
+
 use crate::canon;
 use crate::g6::encode_graph6;
 use crate::graph::Graph;
 
-/// Labeled enumeration is 2^(n(n-1)/2); capped where that stays practical.
-pub const EXHAUSTIVE_MAX_N: usize = 6;
+/// Inductive unlabeled enumeration capped at EXHAUSTIVE_MAX_N.
+pub const EXHAUSTIVE_MAX_N: usize = 8;
 
 #[derive(Debug, thiserror::Error)]
 pub enum EnumError {
@@ -35,34 +37,60 @@ pub fn enumerate_unlabeled(n: usize) -> Result<Vec<Graph>, EnumError> {
     if n > EXHAUSTIVE_MAX_N {
         return Err(EnumError::TooLarge(n));
     }
-    let pairs: Vec<(usize, usize)> = (0..n)
-        .flat_map(|i| (i + 1..n).map(move |j| (i, j)))
-        .collect();
-    let m = pairs.len();
-    let mut seen: std::collections::HashSet<Vec<u8>> = std::collections::HashSet::new();
-    let mut out: Vec<Graph> = Vec::new();
-    let total = 1u64 << m;
-    for bits in 0..total {
-        let edges: Vec<(usize, usize)> = pairs
-            .iter()
-            .enumerate()
-            .filter(|(k, _)| (bits >> k) & 1 == 1)
-            .map(|(_, &p)| p)
-            .collect();
-        let g = Graph::from_edges(n, &edges)?;
-        let key = canon::canonical_bytes(&g)?;
-        if seen.insert(key) {
-            out.push(g);
-        }
+    if n == 0 {
+        return Ok(vec![Graph::empty(0)?]);
     }
-    out.sort_by(|a, b| {
+    if n == 1 {
+        return Ok(vec![Graph::empty(1)?]);
+    }
+
+    let mut current = vec![Graph::empty(1)?];
+
+    for k in 2..=n {
+        let num_masks = 1u64 << (k - 1);
+        let candidates: Vec<(Vec<u8>, Graph)> = current
+            .par_iter()
+            .flat_map(|g| {
+                let mut local = Vec::with_capacity(num_masks as usize);
+                for mask in 0..num_masks {
+                    let h = g.extend_vertex(mask).unwrap();
+                    let key = if k <= 6 {
+                        canon::canonical_bytes(&h).unwrap()
+                    } else {
+                        canon::nauty_canonical_bytes(&h).unwrap()
+                    };
+                    local.push((key, h));
+                }
+                local
+            })
+            .collect();
+
+        let mut seen = std::collections::HashSet::new();
+        let mut next = Vec::new();
+        for (key, h) in candidates {
+            if seen.insert(key) {
+                next.push(h);
+            }
+        }
+        current = next;
+    }
+
+    current.sort_by(|a, b| {
         a.edge_count().cmp(&b.edge_count()).then_with(|| {
-            canon::canonical_bytes(a)
-                .unwrap()
-                .cmp(&canon::canonical_bytes(b).unwrap())
+            let ka = if n <= 6 {
+                canon::canonical_bytes(a).unwrap()
+            } else {
+                canon::nauty_canonical_bytes(a).unwrap()
+            };
+            let kb = if n <= 6 {
+                canon::canonical_bytes(b).unwrap()
+            } else {
+                canon::nauty_canonical_bytes(b).unwrap()
+            };
+            ka.cmp(&kb)
         })
     });
-    Ok(out)
+    Ok(current)
 }
 
 /// Deterministic labeled enumeration (graph6 strings) for oracle use.
@@ -86,9 +114,9 @@ pub fn enumerate_labeled_upto(n: usize) -> Vec<String> {
         .collect()
 }
 
-/// Known unlabeled counts n = 0..=6 (A000088). Hard-coded reference, not
+/// Known unlabeled counts n = 0..=8 (A000088). Hard-coded reference, not
 /// computed — tests compare the engine against these.
-pub const KNOWN_UNLABELED_COUNTS: [usize; 7] = [1, 1, 2, 4, 11, 34, 156];
+pub const KNOWN_UNLABELED_COUNTS: [usize; 9] = [1, 1, 2, 4, 11, 34, 156, 1044, 12346];
 
 #[cfg(test)]
 mod tests {
@@ -111,8 +139,8 @@ mod tests {
     #[test]
     fn refuses_above_cap() {
         assert!(matches!(
-            enumerate_unlabeled(7),
-            Err(EnumError::TooLarge(7))
+            enumerate_unlabeled(9),
+            Err(EnumError::TooLarge(9))
         ));
     }
 

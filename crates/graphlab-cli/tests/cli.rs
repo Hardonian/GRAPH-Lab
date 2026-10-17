@@ -24,23 +24,23 @@ fn doctor_json_parses() {
     let o = args(&["doctor", "--json"]);
     assert!(o.status.success(), "{:?}", o);
     let v: serde_json::Value = serde_json::from_slice(&o.stdout).unwrap();
-    assert_eq!(v["exhaustive_enum_max_n"], 6);
+    assert_eq!(v["exhaustive_enum_max_n"], 8);
 }
 
 #[test]
-fn enumerate_all_levels_succeed_and_n6_is_156_lines() {
-    for n in 0..=6usize {
+fn enumerate_all_levels_succeed_and_n7_is_1044_lines() {
+    for n in 0..=7usize {
         let o = args(&["enumerate", "--vertices", &n.to_string()]);
         assert!(o.status.success(), "n={n}: {:?}", o);
         let lines = String::from_utf8_lossy(&o.stdout).lines().count();
-        let expect = [1usize, 1, 2, 4, 11, 34, 156][n];
+        let expect = [1usize, 1, 2, 4, 11, 34, 156, 1044][n];
         assert_eq!(lines, expect, "n={n}");
     }
 }
 
 #[test]
-fn enumerate_n7_fails_loudly_exit3() {
-    let o = args(&["enumerate", "--vertices", "7"]);
+fn enumerate_n9_fails_loudly_exit3() {
+    let o = args(&["enumerate", "--vertices", "9"]);
     assert_eq!(o.status.code(), Some(3), "{:?}", o);
     let e = String::from_utf8_lossy(&o.stderr);
     assert!(

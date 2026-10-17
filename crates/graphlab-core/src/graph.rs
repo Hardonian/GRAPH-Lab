@@ -144,6 +144,22 @@ impl Graph {
         Ok(g)
     }
 
+    /// Construct a new graph on n + 1 vertices by adding vertex n with the given neighbor mask.
+    pub fn extend_vertex(&self, neighbor_mask: u64) -> Result<Self, GraphError> {
+        let n = self.n;
+        let new_n = n + 1;
+        if new_n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(new_n));
+        }
+        let mut rows = Vec::with_capacity(new_n);
+        for u in 0..n {
+            let bit = ((neighbor_mask >> u) & 1) << n;
+            rows.push(self.rows[u] | bit);
+        }
+        rows.push(neighbor_mask & ((1u64 << n) - 1));
+        Ok(Self { n: new_n, rows })
+    }
+
     /// Build from an edge list. Edges are validated; duplicates are merged.
     pub fn from_edges(n: usize, edges: &[(usize, usize)]) -> Result<Self, GraphError> {
         let mut g = Self::empty(n)?;

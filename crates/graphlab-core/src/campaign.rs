@@ -357,7 +357,7 @@ mod tests {
             predicate: "canary-chi-le-n-1-v1".into(),
             mode: DomainMode::ExhaustiveUnlabeled,
             n_min: 1,
-            n_max: 7,
+            n_max: crate::enumerate::EXHAUSTIVE_MAX_N + 1,
             seed: None,
             samples: None,
             p: None,
