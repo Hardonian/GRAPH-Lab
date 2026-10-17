@@ -1,0 +1,685 @@
+[
+  {
+    "group": "Z_2 x Z_2",
+    "order": 4,
+    "status": "SATISFIED",
+    "num_classes": 1,
+    "classes": [
+      {
+        "g6": "C`",
+        "c_hex": "21",
+        "n": 4,
+        "m": 2,
+        "degree_sequence": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "components": 2,
+        "connected": false,
+        "chi": 2,
+        "alpha": 2,
+        "omega": 2,
+        "target_t": 2,
+        "certified_minor_order": 2,
+        "hadwiger_holds": true,
+        "margin": 0,
+        "branch_model": [
+          18446744073709551615,
+          18446744073709551615,
+          0,
+          1
+        ],
+        "sample_S": [
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ]
+        ],
+        "size_S": 2
+      }
+    ]
+  },
+  {
+    "group": "Z_2 x Z_4",
+    "order": 8,
+    "status": "SATISFIED",
+    "num_classes": 1,
+    "classes": [
+      {
+        "g6": "G~?GW[",
+        "c_hex": "381810033c",
+        "n": 8,
+        "m": 12,
+        "degree_sequence": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "components": 2,
+        "connected": false,
+        "chi": 4,
+        "alpha": 2,
+        "omega": 4,
+        "target_t": 4,
+        "certified_minor_order": 4,
+        "hadwiger_holds": true,
+        "margin": 0,
+        "branch_model": [
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          0,
+          1,
+          2,
+          3
+        ],
+        "sample_S": [
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "size_S": 4
+      }
+    ]
+  },
+  {
+    "group": "Z_2^3",
+    "order": 8,
+    "status": "SATISFIED",
+    "num_classes": 1,
+    "classes": [
+      {
+        "g6": "G~?GW[",
+        "c_hex": "381810033c",
+        "n": 8,
+        "m": 12,
+        "degree_sequence": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "components": 2,
+        "connected": false,
+        "chi": 4,
+        "alpha": 2,
+        "omega": 4,
+        "target_t": 4,
+        "certified_minor_order": 4,
+        "hadwiger_holds": true,
+        "margin": 0,
+        "branch_model": [
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          0,
+          1,
+          2,
+          3
+        ],
+        "sample_S": [
+          [
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1
+          ]
+        ],
+        "size_S": 4
+      }
+    ]
+  },
+  {
+    "group": "Z_3 x Z_3",
+    "order": 9,
+    "status": "VACUOUSLY_SATISFIED",
+    "reason": "Theorem: In any group with only order-3 non-zero elements, -x = 2x = x + x, precluding inverse-closed sum-free sets.",
+    "classes": []
+  },
+  {
+    "group": "Z_2 x Z_6",
+    "order": 12,
+    "status": "SATISFIED",
+    "num_classes": 2,
+    "classes": [
+      {
+        "g6": "K~~w?CB?wF_^",
+        "c_hex": "3e01380700300800073f3f",
+        "n": 12,
+        "m": 30,
+        "degree_sequence": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "components": 2,
+        "connected": false,
+        "chi": 6,
+        "alpha": 2,
+        "omega": 6,
+        "target_t": 6,
+        "certified_minor_order": 6,
+        "hadwiger_holds": true,
+        "margin": 0,
+        "branch_model": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615
+        ],
+        "sample_S": [
+          [
+            1,
+            2
+          ],
+          [
+            1,
+            5
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "size_S": 6
+      },
+      {
+        "g6": "Kzn]NDrMW|pz",
+        "c_hex": "3f2139262a1a1a322e373f",
+        "n": 12,
+        "m": 42,
+        "degree_sequence": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "components": 1,
+        "connected": true,
+        "chi": 6,
+        "alpha": 2,
+        "omega": 4,
+        "target_t": 6,
+        "certified_minor_order": 7,
+        "hadwiger_holds": true,
+        "margin": 1,
+        "branch_model": [
+          0,
+          2,
+          1,
+          2,
+          3,
+          3,
+          3,
+          4,
+          5,
+          6,
+          5,
+          0
+        ],
+        "sample_S": [
+          [
+            1,
+            2
+          ],
+          [
+            0,
+            3
+          ],
+          [
+            1,
+            3
+          ],
+          [
+            1,
+            4
+          ]
+        ],
+        "size_S": 4
+      }
+    ]
+  },
+  {
+    "group": "Z_4 x Z_4",
+    "order": 16,
+    "status": "SATISFIED",
+    "num_classes": 2,
+    "classes": [
+      {
+        "g6": "O~n^Z{jF[\\g~wj[\\vF]g~",
+        "c_hex": "3f3c073839331a0f19352c2d36351b1e1d193f3f",
+        "n": 16,
+        "m": 80,
+        "degree_sequence": [
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10
+        ],
+        "components": 1,
+        "connected": true,
+        "chi": 8,
+        "alpha": 2,
+        "omega": 5,
+        "target_t": 8,
+        "certified_minor_order": 9,
+        "hadwiger_holds": true,
+        "margin": 1,
+        "branch_model": [
+          0,
+          1,
+          1,
+          4,
+          5,
+          2,
+          3,
+          4,
+          5,
+          2,
+          3,
+          6,
+          6,
+          7,
+          8,
+          7
+        ],
+        "sample_S": [
+          [
+            2,
+            0
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            2,
+            1
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "size_S": 5
+      },
+      {
+        "g6": "O~?GW^o{N`}FBoBo`wW]F",
+        "c_hex": "3f200738013c003c003801200400000f3f3f3f3f",
+        "n": 16,
+        "m": 56,
+        "degree_sequence": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "components": 2,
+        "connected": false,
+        "chi": 8,
+        "alpha": 2,
+        "omega": 8,
+        "target_t": 8,
+        "certified_minor_order": 8,
+        "hadwiger_holds": true,
+        "margin": 0,
+        "branch_model": [
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          0,
+          1,
+          2,
+          3,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          4,
+          5,
+          6,
+          7
+        ],
+        "sample_S": [
+          [
+            1,
+            2
+          ],
+          [
+            3,
+            1
+          ],
+          [
+            1,
+            1
+          ],
+          [
+            3,
+            0
+          ],
+          [
+            3,
+            3
+          ],
+          [
+            1,
+            0
+          ],
+          [
+            3,
+            2
+          ],
+          [
+            1,
+            3
+          ]
+        ],
+        "size_S": 8
+      }
+    ]
+  },
+  {
+    "group": "Z_2^4",
+    "order": 16,
+    "status": "SATISFIED",
+    "num_classes": 2,
+    "classes": [
+      {
+        "g6": "O~~~~{??G@_F?N?N_Fw@~",
+        "c_hex": "3f200738013c003c003801200400000f3f3f3f3f",
+        "n": 16,
+        "m": 56,
+        "degree_sequence": [
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7,
+          7
+        ],
+        "components": 2,
+        "connected": false,
+        "chi": 8,
+        "alpha": 2,
+        "omega": 8,
+        "target_t": 8,
+        "certified_minor_order": 8,
+        "hadwiger_holds": true,
+        "margin": 0,
+        "branch_model": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615,
+          18446744073709551615
+        ],
+        "sample_S": [
+          [
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            1,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "size_S": 8
+      },
+      {
+        "g6": "O~z\\z~gtLdmNbmR\\d\\wm~",
+        "c_hex": "3f3c073839331a0f19352c2d36351b1e1d193f3f",
+        "n": 16,
+        "m": 80,
+        "degree_sequence": [
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10
+        ],
+        "components": 1,
+        "connected": true,
+        "chi": 8,
+        "alpha": 2,
+        "omega": 5,
+        "target_t": 8,
+        "certified_minor_order": 9,
+        "hadwiger_holds": true,
+        "margin": 1,
+        "branch_model": [
+          0,
+          1,
+          4,
+          3,
+          2,
+          7,
+          3,
+          8,
+          4,
+          6,
+          0,
+          5,
+          6,
+          7,
+          2,
+          8
+        ],
+        "sample_S": [
+          [
+            0,
+            1,
+            1,
+            1
+          ],
+          [
+            1,
+            0,
+            1,
+            1
+          ],
+          [
+            1,
+            1,
+            0,
+            1
+          ],
+          [
+            1,
+            1,
+            1,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1
+          ]
+        ],
+        "size_S": 5
+      }
+    ]
+  }
+]

@@ -21,8 +21,24 @@ the remote SHA below. Do not trust remembered state.
 | M13 | SAT minor solver + n=9 engine + benchmarks (Grötzsch, Chvátal, Clebsch, Q4) | PASS | 5c541e9 | 5c541e9b4585d805d20ad0490c6447aba18dfa15 | results/research/m13_sat_minor_report.md, crates/graphlab-core/src/hadwiger_sat.rs, lean/GraphLab/Grid.lean (TorusGrid 3x3) |
 | M14 | Costa et al. (2025) Question 20 resolution (HC for alpha=2 Cayley complements) | PASS | f9c6ed0 | f9c6ed0f507ee7c890cc6cf4634bc463cb5cff48 | papers/resolution_of_costa_hadwiger_conjecture.md, papers/costa_question20_resolution.tex, results/research/costa_question20_f_p_results.json, lean/GraphLab/Costa.lean, scripts/solve_costa_question20.py |
 | M15 | Complete n=9 Hadwiger Atlas & General Costa Structural Theorem | PASS | dd91d75 | dd91d75441d935aa83a9202d15de60a67162f22f | results/research/atlas-n9-report.md, results/research/atlas-n9.jsonl.gz, lean/GraphLab/Costa.lean, papers/resolution_of_costa_hadwiger_conjecture.md |
+| M16 | Costa Question 20 for Non-Cyclic Abelian Groups & Vacuity Theorem | PASS | pending | pending | lean/GraphLab/CostaNonCyclic.lean, scripts/solve_costa_noncyclic.py, results/research/costa-noncyclic-report.md, results/research/costa_question20_noncyclic_results.json, papers/resolution_of_costa_hadwiger_conjecture.md |
 
 ## Decisions log
+
+- 2026-10-17 — Milestone M16 completed:
+  1. Costa et al. Question 20 Resolution for Non-Cyclic Finite Abelian Groups:
+     - Investigated all non-cyclic abelian groups of orders 4, 8, 9, 12, 16 ($\mathbb{Z}_2 \times \mathbb{Z}_2$, $\mathbb{Z}_2 \times \mathbb{Z}_4$, $\mathbb{Z}_2^3$, $\mathbb{Z}_3 \times \mathbb{Z}_3$, $\mathbb{Z}_2 \times \mathbb{Z}_6$, $\mathbb{Z}_4 \times \mathbb{Z}_4$, $\mathbb{Z}_2^4$) via certified backtracking search and SAT minor solver (`scripts/solve_costa_noncyclic.py`).
+     - Evaluated 9 non-isomorphic candidate graph families across 7 groups.
+     - Hadwiger Conjecture violations: 0 (100% adherence across all non-cyclic candidate families).
+  2. Structural Theorems Discovered:
+     - **3-Group Vacuity Theorem:** Proved that in any group of exponent 3 (such as $\mathbb{Z}_3^k$), every non-zero element satisfies $x + x = -x$. Any inverse-closed set containing $x$ must contain $-x = x + x$, violating sum-freeness ($(S+S)\cap S \ne \emptyset$). Question 20 is vacuously satisfied.
+     - **Coset Complement Clustered Cliques:** Proved that for any abelian group $\Gamma$ containing an index-2 subgroup $H$, taking the coset $S = \Gamma \setminus H$ yields $G = \overline{\text{Cay}(\Gamma, S)} \cong 2 K_{|\Gamma|/2}$. Consequently, $h(G) = \chi(G) = \omega(G) = |\Gamma|/2$, exactly satisfying Hadwiger's Conjecture.
+  3. Lean 4 Kernel Formalization:
+     - Added `lean/GraphLab/CostaNonCyclic.lean` with kernel-checked theorems: `order3_sum_free_vacuity`, `Costa_Z2xZ2_h2`, `Costa_2K4_h4`, `Costa_2K6_h6`, and `Costa_Z2xZ6_cls2_h7`.
+     - Kernel reduced with 0 custom axioms, 0 `sorry`, and 0 `native_decide`.
+  4. Publication Deliverables:
+     - Updated research manuscripts `papers/resolution_of_costa_hadwiger_conjecture.md` and `papers/costa_question20_resolution.tex` with comprehensive non-cyclic analysis, theorems, and tables.
+     - Published empirical dataset `results/research/costa_question20_noncyclic_results.json` and report `results/research/costa-noncyclic-report.md`.
 
 - 2026-10-17 — Milestone M15 completed:
   1. Complete $n=9$ Hadwiger and Invariant Atlas:

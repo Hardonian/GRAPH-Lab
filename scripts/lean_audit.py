@@ -98,7 +98,7 @@ def main() -> int:
         env = dict(os.environ, PATH=path_str)
         lake_cmd = shutil.which("lake", path=path_str) or "lake"
         r = subprocess.run([lake_cmd, "build"], cwd=LEAN_DIR, env=env,
-                           capture_output=True, text=True)
+                           capture_output=True, text=True, encoding="utf-8", errors="replace")
         if r.returncode != 0:
             print("lean_audit: lake build FAILED", file=sys.stderr)
             print(r.stdout[-3000:], r.stderr[-2000:], file=sys.stderr)

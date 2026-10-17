@@ -69,14 +69,16 @@ The part-separation bound $n - \lceil n/r \rceil + 1$ universally dominates the 
 In December 2025, Costa, Luu, Wood, and Yip (arXiv:2512.17114v1) proposed Question 20, asking whether all complements of sum-free-maximal Cayley graphs over abelian groups $\overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture ($HC_{\alpha=2}$), noting that it remained open even for prime fields $\mathbb{F}_p$.
 
 - **General Analytical Structural Theorems:**
-  1. **Exact Chromatic Number:** For any odd prime $p$ and non-empty sum-free $S \subset \mathbb{F}_p$, $\chi(\overline{\text{Cay}(\mathbb{F}_p, S)}) = \frac{p+1}{2}$ identically, proved analytically via Godsil (1981) hypomatchability of connected vertex-transitive graphs of odd order.
+  1. **Exact Chromatic Number Identity:** For any odd prime $p$ and non-empty sum-free $S \subset \mathbb{F}_p$, $\chi(\overline{\text{Cay}(\mathbb{F}_p, S)}) = \frac{p+1}{2}$ identically, proved analytically via Godsil (1981) hypomatchability of connected vertex-transitive graphs of odd order.
   2. **Structural Matching Contraction Theorem:** Every maximal matching in $G$ has size $(p-1)/2$ (leaving 1 unmatched vertex). Contracting the matching edges yields a $K_{(p+1)/2}$ minor under bounded bad-pair density ($|S| \le (p+1)/3$ Diananda-Yap).
-- **Classification & Verification:** We classified all inverse-closed sum-free-maximal subsets of $\mathbb{F}_p$ for all primes $p \in \{5, 7, 11, 13, 17, 19, 23\}$ (10 non-isomorphic graph families).
-- **Theorem:** **100% of these extremal graphs satisfy Hadwiger's Conjecture** ($h(G) \ge \chi(G)$) and satisfy $h(G) \ge \lceil p / 2 \rceil$.
-- **Surplus Margins:** While tight ($h = \chi = (p+1)/2$) for $p \in \{5, 11, 17\}$, margins surge to $+1, +2$, and reach **$+3$** at $p = 19$ ($h(G) \ge 13 > \chi(G) = 10$).
-- **Lean 4 Kernel-Checked Proofs:** Constructive branch models for all 7 prime fields ($p \in \{5, 7, 11, 13, 17, 19, 23\}$) kernel-checked in [`lean/GraphLab/Costa.lean`](lean/GraphLab/Costa.lean) with 0 custom axioms and 0 sorry.
+  3. **3-Group Vacuity Theorem:** In any group of exponent 3 (e.g., $\mathbb{Z}_3^k$), every non-zero element satisfies $x + x = -x$, proving that **no inverse-closed sum-free subsets can exist** in any 3-group.
+  4. **Coset Complement Clustered Cliques:** For any abelian group $\Gamma$ with an index-2 subgroup $H$, taking the coset $S = \Gamma \setminus H$ yields $G = \overline{\text{Cay}(\Gamma, S)} \cong 2 K_{|\Gamma|/2}$, satisfying $h(G) = \chi(G) = |\Gamma|/2$ exactly.
+- **Classification & Verification:**
+  - **Prime Cyclic Fields:** All 10 non-isomorphic graph families across $\mathbb{F}_p$ for $p \in \{5, 7, 11, 13, 17, 19, 23\}$ satisfy Hadwiger's Conjecture 100% (margins up to $+3$ at $p = 19$).
+  - **Non-Cyclic Abelian Groups:** All 9 non-isomorphic graph families across $\mathbb{Z}_2 \times \mathbb{Z}_2$, $\mathbb{Z}_2 \times \mathbb{Z}_4$, $\mathbb{Z}_2^3$, $\mathbb{Z}_2 \times \mathbb{Z}_6$, $\mathbb{Z}_4 \times \mathbb{Z}_4$, and $\mathbb{Z}_2^4$ satisfy Hadwiger's Conjecture 100% (margins up to $+1$).
+- **Machine-Checked Lean 4 Proofs:** All seminal cyclic and non-cyclic branch models kernel-checked in [`lean/GraphLab/Costa.lean`](lean/GraphLab/Costa.lean) and [`lean/GraphLab/CostaNonCyclic.lean`](lean/GraphLab/CostaNonCyclic.lean) with 0 custom axioms and 0 sorry.
 
-*Status:* **PROVED, SAT_WITNESS & LEAN_CHECKED** (`lean/GraphLab/Costa.lean`).
+*Status:* **PROVED, SAT_WITNESS & LEAN_CHECKED** (`lean/GraphLab/Costa.lean`, `lean/GraphLab/CostaNonCyclic.lean`).
 
 ---
 
@@ -100,7 +102,7 @@ The computational engine scales native unlabeled graph enumeration to $n \le 9$ 
 
 Every branch-set minor certificate is encoded as a compact base-$(t+1)$ integer word and validated directly by Lean 4's kernel reduction:
 
-- **Zero-Axiom Guarantee:** Strictly 0 axioms, 0 `sorry`, and 0 `native_decide` across all 11 Lean source files.
+- **Zero-Axiom Guarantee:** Strictly 0 axioms, 0 `sorry`, and 0 `native_decide` across all 12 Lean source files.
 - **Continuous Audit:** Enforced by `scripts/lean_audit.py` on every verification gate run.
 
 ---

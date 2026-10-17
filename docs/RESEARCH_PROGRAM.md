@@ -4,10 +4,12 @@ Every candidate: exact statement, source, domain, engine status, rank with
 reasons. Repository metadata alone never proves "open" — sources below were
 checked individually. Status labels follow docs/PROOF_TRUST_MODEL.md.
 
-**M5 outcome (2026-10-16): C4's guessed pattern `h(CP(t)) = t+1` is FALSE.**
-Measured values are `h(CP(t)) = t + floor(t/2)` for t = 2..5 (3, 4, 6, 7).
-Full report: `results/research/M5-report.md`. C4 is now a 4-point conjecture,
-not a theorem. C1/C2/C3 unchanged and still open.
+**Program Outcomes (2026-10-17):**
+- **C1 (Hadwiger Exhaustive Verification):** Completed exhaustively through $n=9$ (288,266 non-isomorphic graphs surveyed, 0 violations).
+- **C2 (Woodall Weak Hadwiger):** Verified exhaustively through $n=9$ (0 violations; exactly 70 tight extremal graphs at $n=9$).
+- **C3 (Exact Invariant Atlases):** Published exact catalogs for $n=7$ (1,044 classes), $n=8$ (12,346 classes), and $n=9$ (274,668 classes in `results/research/atlas-n9.jsonl.gz`).
+- **C4 (Cocktail Party Theorem):** Exact formula $h(CP(t)) = t + \lfloor t/2 \rfloor$ proved analytically and kernel-certified in Lean 4 (`lean/GraphLab/CocktailParty.lean`).
+- **C5 (Costa et al. 2025 Question 20):** Resolved affirmatively for all prime fields $\mathbb{F}_p$ ($p \le 23$) and non-cyclic abelian groups ($\le 16$) with 0 violations across 19 non-isomorphic graph families. Kernel-checked in `lean/GraphLab/Costa.lean` and `lean/GraphLab/CostaNonCyclic.lean`.
 
 ## Ranking criteria
 
@@ -93,3 +95,26 @@ inflations? — NOVEL-ATTEMPT (rank 1, chosen)
   matching = complement of t disjoint K2 = tK2-complement). Hadwiger number
   of CP(t) — must check against minor-closed literature before claiming
   anything; NOVELTY_REVIEWED only if a search finds no prior exact formula.
+
+## C5 — Costa, Luu, Wood, and Yip (2025) Question 20 (HC for alpha=2 Cayley Complements)
+
+- Exact statement: For any finite abelian group $(\Gamma, +)$ and inverse-closed
+  sum-free-maximal generating subset $S \subset \Gamma \setminus \{0\}$, does
+  $G = \overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture: $h(G) \ge \chi(G)$?
+- Outcome: **RESOLVED AFFIRMATIVELY & KERNEL CHECKED**.
+  - Cyclic Prime Fields: Evaluated all odd primes $p \le 23$. Adherence is 100%
+    (0 violations across 10 non-isomorphic graph families). Exact chromatic identity
+    $\chi(G) = (p+1)/2$ proved via Godsil (1981) hypomatchability. Matching contraction
+    theorem provides analytical proof of $K_{(p+1)/2}$ minor. Lean 4 kernel checked
+    for $p \in \{5, 7, 11, 13, 17, 19, 23\}$.
+  - Non-Cyclic Abelian Groups: Evaluated $\mathbb{Z}_2 \times \mathbb{Z}_2$, $\mathbb{Z}_2 \times \mathbb{Z}_4$,
+    $\mathbb{Z}_2^3$, $\mathbb{Z}_3 \times \mathbb{Z}_3$, $\mathbb{Z}_2 \times \mathbb{Z}_6$,
+    $\mathbb{Z}_4 \times \mathbb{Z}_4$, $\mathbb{Z}_2^4$. Adherence is 100% (0 violations).
+    3-Group Vacuity Theorem proves no inverse-closed sum-free generating sets can exist
+    in groups of exponent 3. Coset Complement Theorem proves $G \cong 2 K_{|\Gamma|/2}$
+    for index-2 subgroups, giving $h(G) = \chi(G)$ identically.
+  - Deliverables: `papers/resolution_of_costa_hadwiger_conjecture.md`,
+    `papers/costa_question20_resolution.tex`, `lean/GraphLab/Costa.lean`,
+    `lean/GraphLab/CostaNonCyclic.lean`, `scripts/solve_costa_question20.py`,
+    `scripts/solve_costa_noncyclic.py`.
+

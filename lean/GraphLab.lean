@@ -8,3 +8,4 @@ import GraphLab.CompleteMultipartite
 import GraphLab.Turan
 import GraphLab.Grid
 import GraphLab.Costa
+import GraphLab.CostaNonCyclic
