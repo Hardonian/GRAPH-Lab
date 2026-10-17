@@ -9,7 +9,8 @@ Lean 4 / Mathlib proof pipeline with a kernel-checked witness bridge.
 `docs/STATUS.md` is the authoritative progress ledger; this README documents
 features that actually exist and run in the repository today.
 
-**Milestones M0 through M12 are PASS.**  
+**Milestones M0 through M14 are PASS.**
+
 - **Authoritative Progress Ledger:** [`docs/STATUS.md`](docs/STATUS.md)
 - **Research Papers:**
   - *Resolution of Costa et al. Question 20 on Sum-Free-Maximal Cayley Complements:* [`papers/resolution_of_costa_hadwiger_conjecture.md`](papers/resolution_of_costa_hadwiger_conjecture.md) ([LaTeX](papers/costa_question20_resolution.tex))
@@ -21,6 +22,7 @@ features that actually exist and run in the repository today.
 ## Major Theoretical Breakthroughs & Proved Theorems
 
 ### 1. Universal Apex Hadwiger Theorem
+
 For any simple undirected graph $G$, the apex suspension $G \star K_1 = G + v$ satisfies:
 $$h(G \star K_1) = h(G) + 1$$
 By induction, for any $k \ge 1$:
@@ -28,9 +30,12 @@ $$h(G \star K_k) = h(G) + k$$
 *Status:* **PROVED & LEAN_CHECKED** (`lean/GraphLab/Apex.lean`).
 
 ### 2. Complete Multipartite Hadwiger Theorem
+
 For any complete multipartite graph $K_{n_1, \dots, n_k}$ with part sizes in non-decreasing order $1 \le n_1 \le \dots \le n_k$ and $n = \sum_{i=1}^k n_i$:
 $$h(K_{n_1, \dots, n_k}) = \min\left(1 + \sum_{i=1}^{k-1} n_i, \left\lfloor \frac{n + k}{2} \right\rfloor\right)$$
+
 This single master theorem unifies and settles:
+
 - **Complete Bipartite Graphs ($k=2$):** $h(K_{a, b}) = a + 1$ (for $a \le b$).
 - **Cocktail Party Graphs ($n_i = 2$):** $h(CP(t)) = t + \lfloor t/2 \rfloor$ for all $t \ge 1$.
 - **Complete Tripartite Graphs ($k=3$):** $h(K_{a, b, c}) = \min(1 + a + b, \lfloor (a + b + c + 3)/2 \rfloor)$.
@@ -39,12 +44,14 @@ This single master theorem unifies and settles:
 *Status:* **PROVED & LEAN_CHECKED** (`lean/GraphLab/CompleteMultipartite.lean`).
 
 ### 3. Turán Graph Hadwiger Theorem
+
 For all integers $n \ge r \ge 2$, the balanced complete $r$-partite Turán graph $T(n, r)$ satisfies:
 $$h(T(n, r)) = \left\lfloor \frac{n + r}{2} \right\rfloor$$
 The part-separation bound $n - \lceil n/r \rceil + 1$ universally dominates the parity pairing bound for all $n \ge r \ge 2$.  
 *Status:* **PROVED & LEAN_CHECKED** (`lean/GraphLab/Turan.lean`).
 
 ### 4. Cartesian Grid & Product Hadwiger Theorems
+
 - **2D Grids $P_a \square P_b$:** Planar graphs with $h \le 4$.
   $$h(P_a \square P_b) = \begin{cases}
   1 & \text{if } a = 1, b = 1 \\
@@ -58,7 +65,9 @@ The part-separation bound $n - \lceil n/r \rceil + 1$ universally dominates the 
 *Status:* **PROVED & LEAN_CHECKED** (`lean/GraphLab/Grid.lean`).
 
 ### 5. Resolution of Costa, Luu, Wood, and Yip (2025) Question 20 ($HC_{\alpha=2}$)
+
 In December 2025, Costa, Luu, Wood, and Yip (arXiv:2512.17114v1) proposed Question 20, asking whether all complements of sum-free-maximal Cayley graphs over abelian groups $\overline{\text{Cay}(\Gamma, S)}$ satisfy Hadwiger's Conjecture ($HC_{\alpha=2}$), noting that it remained open even for prime fields $\mathbb{F}_p$.
+
 - **Classification & Verification:** We classified all inverse-closed sum-free-maximal subsets of $\mathbb{F}_p$ for all primes $p \in \{5, 7, 11, 13, 17, 19, 23\}$ (10 non-isomorphic graph families).
 - **Theorem:** **100% of these extremal graphs satisfy Hadwiger's Conjecture** ($h(G) \ge \chi(G)$) and satisfy $h(G) \ge \lceil p / 2 \rceil$.
 - **Surplus Margins:** While tight ($h = \chi = (p+1)/2$) for $p \in \{5, 11, 17\}$, margins surge to $+1, +2$, and reach **$+3$** at $p = 19$ ($h(G) \ge 13 > \chi(G) = 10$).
@@ -73,7 +82,7 @@ In December 2025, Costa, Luu, Wood, and Yip (arXiv:2512.17114v1) proposed Questi
 The computational engine scales native unlabeled graph enumeration to $n \le 8$ in under 2 seconds:
 
 | Vertices $n$ | Unlabeled Classes | Atlas File | Hadwiger Violations | Weak Hadwiger Violations | Tight Extremal ($h \cdot \alpha = n$) |
-|:---:|:---:|:---:|:---:|:---:|:---:|
+| :---: | :---: | :---: | :---: | :---: | :---: |
 | $n \le 6$ | 208 | Memory | 0 | 0 | 18 |
 | $n = 7$ | 1,044 | [`results/research/atlas-n7.jsonl`](results/research/atlas-n7.jsonl) | 0 | 0 | 26 |
 | $n = 8$ | 12,346 | [`results/research/atlas-n8.jsonl`](results/research/atlas-n8.jsonl) | 0 | 0 | 34 |
@@ -86,7 +95,8 @@ The computational engine scales native unlabeled graph enumeration to $n \le 8$ 
 ## Machine-Checked Lean 4 Proof Bridge
 
 Every branch-set minor certificate is encoded as a compact base-$(t+1)$ integer word and validated directly by Lean 4's kernel reduction:
-- **Zero-Axiom Guarantee:** Strictly 0 axioms, 0 `sorry`, and 0 `native_decide` across all 10 Lean source files.
+
+- **Zero-Axiom Guarantee:** Strictly 0 axioms, 0 `sorry`, and 0 `native_decide` across all 11 Lean source files.
 - **Continuous Audit:** Enforced by `scripts/lean_audit.py` on every verification gate run.
 
 ---
@@ -109,7 +119,7 @@ Every branch-set minor certificate is encoded as a compact base-$(t+1)$ integer 
 
 ## Repository Layout
 
-```
+```text
 crates/graphlab-core/   Rust computational core (bitset graphs, branch sets, Nauty canonicalizer)
 crates/graphlab-cli/    graphlab CLI entry point
 papers/                 Professional research papers and LaTeX publications
