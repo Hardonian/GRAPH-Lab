@@ -113,6 +113,135 @@ pub fn complete_bipartite_minor_model(a: usize, b: usize) -> Vec<usize> {
     assign
 }
 
+/// Exact Hadwiger number for complete multipartite graph K_{n_1, ..., n_k}.
+/// Formula: min(1 + sum_{i=0..k-2} sorted_parts[i], floor((n + k) / 2)).
+pub fn complete_multipartite_hadwiger_number(parts: &[usize]) -> usize {
+    if parts.is_empty() {
+        return 0;
+    }
+    if parts.len() == 1 {
+        return 1;
+    }
+    let mut sorted = parts.to_vec();
+    sorted.sort_unstable();
+    let k = sorted.len();
+    let n: usize = sorted.iter().sum();
+    let sum_rest: usize = sorted[..k - 1].iter().sum();
+    let bound_part_separation = 1 + sum_rest;
+    let bound_parity = (n + k) / 2;
+    bound_part_separation.min(bound_parity)
+}
+
+/// Generate an exact constructive branch-set certificate for the complete minor
+/// of size h(K_{n_1, ..., n_k}) in the complete multipartite graph.
+pub fn complete_multipartite_minor_model(parts: &[usize]) -> Vec<usize> {
+    if parts.is_empty() {
+        return Vec::new();
+    }
+    let n: usize = parts.iter().sum();
+    if parts.len() == 1 {
+        let mut assign = vec![DELETED; n];
+        if n > 0 {
+            assign[0] = 0;
+        }
+        return assign;
+    }
+    let target_t = complete_multipartite_hadwiger_number(parts);
+    let Ok(g) = Graph::complete_multipartite(parts) else {
+        return Vec::new();
+    };
+
+    let k = parts.len();
+    let mut part_vertices = Vec::with_capacity(k);
+    let mut curr = 0;
+    for &sz in parts {
+        part_vertices.push((curr..curr + sz).collect::<Vec<usize>>());
+        curr += sz;
+    }
+
+    let min_m = target_t.saturating_sub(k);
+    for m in min_m..=target_t {
+        let num_singletons = target_t - m;
+        if num_singletons > k {
+            continue;
+        }
+        for mask in 0..(1usize << k) {
+            if mask.count_ones() as usize != num_singletons {
+                continue;
+            }
+            let mut assign = vec![DELETED; n];
+            let mut branch_idx = 0;
+
+            for (p, p_verts) in part_vertices.iter().enumerate() {
+                if (mask >> p) & 1 == 1 {
+                    assign[p_verts[0]] = branch_idx;
+                    branch_idx += 1;
+                }
+            }
+
+            let mut curr_avail: Vec<Vec<usize>> = Vec::with_capacity(k);
+            for (p, p_verts) in part_vertices.iter().enumerate() {
+                let start_idx = if (mask >> p) & 1 == 1 { 1 } else { 0 };
+                curr_avail.push(p_verts[start_idx..].to_vec());
+            }
+
+            let total_avail: usize = curr_avail.iter().map(|v| v.len()).sum();
+            if total_avail < 2 * m {
+                continue;
+            }
+
+            let mut possible = true;
+            for _ in 0..m {
+                let mut sorted_parts: Vec<(usize, usize)> = curr_avail
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, v)| !v.is_empty())
+                    .map(|(p, v)| (v.len(), p))
+                    .collect();
+                sorted_parts.sort_unstable_by_key(|a| std::cmp::Reverse(a.0));
+                if sorted_parts.len() < 2 {
+                    possible = false;
+                    break;
+                }
+                let p1 = sorted_parts[0].1;
+                let p2 = sorted_parts[1].1;
+                let v1 = curr_avail[p1].pop().unwrap();
+                let v2 = curr_avail[p2].pop().unwrap();
+                assign[v1] = branch_idx;
+                assign[v2] = branch_idx;
+                branch_idx += 1;
+            }
+
+            if !possible {
+                continue;
+            }
+
+            if check_branch_model(&g, &assign, target_t) {
+                return assign;
+            }
+        }
+    }
+    Vec::new()
+}
+
+/// Given a valid minor model for K_t on a base graph with base_n vertices,
+/// lift it to a valid minor model for K_{t + 1} on the apex graph G * K_1 (base_n + 1 vertices).
+pub fn apex_minor_model(base_model: &[usize], base_n: usize) -> Vec<usize> {
+    let t = base_model
+        .iter()
+        .filter(|&&p| p != DELETED)
+        .max()
+        .map(|&m| m + 1)
+        .unwrap_or(0);
+    let mut assign = Vec::with_capacity(base_n + 1);
+    assign.extend_from_slice(&base_model[..base_n.min(base_model.len())]);
+    while assign.len() < base_n {
+        assign.push(DELETED);
+    }
+    assign.push(t);
+    assign
+}
+
 /// Is there a K_t minor? Restricted-growth branch-set search with deletion.
 pub fn has_kminor(g: &Graph, t: usize) -> Result<bool, HadwigerError> {
     let n = g.num_vertices();
@@ -384,5 +513,72 @@ mod tests {
                 "constructive K_{{a+1}} minor failed for large K_{{{a},{b}}}"
             );
         }
+    }
+
+    #[test]
+    fn complete_multipartite_hadwiger_theorem_verified() {
+        // All complete tripartite graphs with n <= 10
+        for a in 1..=4 {
+            for b in a..=4 {
+                for c in b..=(10 - a - b) {
+                    let parts = [a, b, c];
+                    let g = Graph::complete_multipartite(&parts).unwrap();
+                    let expected_h = complete_multipartite_hadwiger_number(&parts);
+                    let actual_h = hadwiger_number(&g).unwrap();
+                    assert_eq!(
+                        actual_h, expected_h,
+                        "Formula mismatch for K_{{{a},{b},{c}}}: got {actual_h}, expected {expected_h}"
+                    );
+                    let model = complete_multipartite_minor_model(&parts);
+                    assert!(
+                        check_branch_model(&g, &model, expected_h),
+                        "Constructive model check failed for K_{{{a},{b},{c}}}"
+                    );
+                }
+            }
+        }
+
+        // 4-partite and 5-partite graphs with n <= 10
+        for a in 1..=2 {
+            for b in a..=2 {
+                for c in b..=2 {
+                    for d in c..=(10 - a - b - c) {
+                        let parts = [a, b, c, d];
+                        let g = Graph::complete_multipartite(&parts).unwrap();
+                        let expected_h = complete_multipartite_hadwiger_number(&parts);
+                        let actual_h = hadwiger_number(&g).unwrap();
+                        assert_eq!(actual_h, expected_h);
+                        let model = complete_multipartite_minor_model(&parts);
+                        assert!(check_branch_model(&g, &model, expected_h));
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn universal_apex_hadwiger_theorem_verified() {
+        // Apex of Path P_4 (h=2 -> h=3)
+        let p4 = Graph::from_edges(4, &[(0, 1), (1, 2), (2, 3)]).unwrap();
+        let apex_p4 = p4.apex().unwrap();
+        assert_eq!(hadwiger_number(&p4).unwrap(), 2);
+        assert_eq!(hadwiger_number(&apex_p4).unwrap(), 3);
+
+        // Apex of Cycle C_5 (h=3 -> h=4, Wheel W_5)
+        let c5 = Graph::from_edges(5, &[(0, 1), (1, 2), (2, 3), (3, 4), (4, 0)]).unwrap();
+        let w5 = c5.apex().unwrap();
+        assert_eq!(hadwiger_number(&c5).unwrap(), 3);
+        assert_eq!(hadwiger_number(&w5).unwrap(), 4);
+
+        // Apex of K_{2, 3} (h=3 -> h=4)
+        let k23 = Graph::complete_bipartite(2, 3).unwrap();
+        let apex_k23 = k23.apex().unwrap();
+        assert_eq!(hadwiger_number(&k23).unwrap(), 3);
+        assert_eq!(hadwiger_number(&apex_k23).unwrap(), 4);
+
+        // Verify apex_minor_model lifting on K_{2, 3}
+        let k23_model = complete_bipartite_minor_model(2, 3);
+        let apex_model = apex_minor_model(&k23_model, 5);
+        assert!(check_branch_model(&apex_k23, &apex_model, 4));
     }
 }

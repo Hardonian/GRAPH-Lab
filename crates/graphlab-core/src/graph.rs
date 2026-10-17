@@ -92,6 +92,58 @@ impl Graph {
         Ok(g)
     }
 
+    /// Complete multipartite graph K_{n_1, ..., n_k}.
+    /// Vertices are indexed sequentially by parts.
+    pub fn complete_multipartite(parts: &[usize]) -> Result<Self, GraphError> {
+        let n: usize = parts.iter().sum();
+        if n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(n));
+        }
+        let mut g = Self::empty(n)?;
+        let mut part_starts = Vec::with_capacity(parts.len());
+        let mut curr = 0;
+        for &sz in parts {
+            part_starts.push(curr);
+            curr += sz;
+        }
+        for (i, &sz_i) in parts.iter().enumerate() {
+            let start_i = part_starts[i];
+            for (j, &sz_j) in parts.iter().enumerate().skip(i + 1) {
+                let start_j = part_starts[j];
+                for u in start_i..(start_i + sz_i) {
+                    for v in start_j..(start_j + sz_j) {
+                        g.add_edge(u, v)?;
+                    }
+                }
+            }
+        }
+        Ok(g)
+    }
+
+    /// Complete tripartite graph K_{a, b, c}.
+    pub fn complete_tripartite(a: usize, b: usize, c: usize) -> Result<Self, GraphError> {
+        Self::complete_multipartite(&[a, b, c])
+    }
+
+    /// Apex graph G * K_1: adds a universal vertex adjacent to all existing vertices.
+    pub fn apex(&self) -> Result<Self, GraphError> {
+        let n = self.n;
+        let new_n = n + 1;
+        if new_n > MAX_VERTICES {
+            return Err(GraphError::TooManyVertices(new_n));
+        }
+        let mut g = Self::empty(new_n)?;
+        for u in 0..n {
+            for v in (u + 1)..n {
+                if self.has_edge(u, v) {
+                    g.add_edge(u, v)?;
+                }
+            }
+            g.add_edge(u, n)?;
+        }
+        Ok(g)
+    }
+
     /// Build from an edge list. Edges are validated; duplicates are merged.
     pub fn from_edges(n: usize, edges: &[(usize, usize)]) -> Result<Self, GraphError> {
         let mut g = Self::empty(n)?;

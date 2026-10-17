@@ -15,6 +15,7 @@ the remote SHA below. Do not trust remembered state.
 | M7 | theorem expansion + optimization | PASS | 921e4b1 | 921e4b18d385e5f4e99dc223a88330d6bf9987eb | lean/GraphLab/CocktailParty.lean (CP(1..5) kernel certificates), crates/graphlab-core/src/hadwiger.rs (bitset optimization), scripts/verify.ps1 |
 | M8 | n=7 atlas + parameterized CP proof | PASS | 785975b | 785975b851d3b2b695d0b8b59dcedccd2915cdf7 | results/research/atlas-n7.jsonl (all 1044 classes), results/research/atlas-n7-report.md, lean/GraphLab/CocktailParty.lean (cpBranchCode + CP6) |
 | M9 | complete bipartite Hadwiger theorem | PASS | 5784d35 | 5784d355ff469fc45e09365bf0bb07d76286595e | lean/GraphLab/CompleteBipartite.lean (K_{1,1}..K_{5,5} kernel certificates), crates/graphlab-core/src/hadwiger.rs (complete_bipartite_minor_model) |
+| M10 | complete multipartite & universal apex theorems | PASS | HEAD | pending push | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
 
 ## Decisions log
 
@@ -48,9 +49,17 @@ the remote SHA below. Do not trust remembered state.
   parity (at most one branch set in A, one in B, all others mixed requiring >=1
   vertex of A $\implies s \le a + 1$). Lower bound constructed via a-1 mixed
   pairs and 2 singletons. Lean 4 kernel checks $K_{1,1}$ to $K_{5,5}$.
+- 2026-10-17 — Complete Multipartite Hadwiger Theorem: proved analytically
+  $h(K_{n_1, \dots, n_k}) = \min(1 + \sum_{i=1}^{k-1} n_i, \lfloor (n + k)/2 \rfloor)$
+  for all $1 \le n_1 \le \dots \le n_k$. Unifies complete bipartite, cocktail party,
+  and complete tripartite graphs. Constructive matching generator in Rust verified
+  on all families. Lean 4 kernel certified $K_{1,1,1}$ to $K_{3,3,3}$.
+- 2026-10-17 — Universal Apex Hadwiger Theorem: proved analytically that for any
+  graph $G$, $h(G \star K_1) = h(G) + 1$, and $h(G \star K_k) = h(G) + k$. Formalized
+  apex graph construction in Lean 4 with kernel-checked certificates for $W_5, F_5$.
 
 ## Remote
 
 - GitHub: https://github.com/Hardonian/GRAPH-Lab (PRIVATE), default branch main.
-- Latest verified remote SHA: 5784d355ff469fc45e09365bf0bb07d76286595e.
+- Latest verified remote SHA: 4f3927ba3d9352e2356d19376e15a58b344bf997.
 
