@@ -17,7 +17,7 @@ the remote SHA below. Do not trust remembered state.
 | M9 | complete bipartite Hadwiger theorem | PASS | 5784d35 | 5784d355ff469fc45e09365bf0bb07d76286595e | lean/GraphLab/CompleteBipartite.lean (K_{1,1}..K_{5,5} kernel certificates), crates/graphlab-core/src/hadwiger.rs (complete_bipartite_minor_model) |
 | M10 | complete multipartite & universal apex theorems | PASS | 2b3c3de | 2b3c3de3811ca2ab523af0a9baa0b3d665adc57f | lean/GraphLab/Apex.lean, lean/GraphLab/CompleteMultipartite.lean, results/research/multipartite-apex-report.md |
 | M11 | n=8 atlas + engine enum scaling (n<=8) | PASS | 4764fea | 4764feaa3b9652601feafaf1991b1afce1f2b250 | results/research/atlas-n8.jsonl (all 12346 classes), results/research/atlas-n8-report.md, crates/graphlab-core/src/enumerate.rs, scripts/generate_atlas_n8.py |
-| M12 | Turán & Cartesian product Hadwiger theorems | PASS | f176880 | f17688005639552f0e0dd3016c77e43d4a0b2cd2 | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
+| M12 | Turán & Cartesian product Hadwiger theorems | PASS | fa6199a | fa6199ad68a95c63be20bbf6d94c46d0253b40be | lean/GraphLab/{Turan,Grid}.lean (14 kernel certificates), crates/graphlab-core/src/{graph,hadwiger}.rs (Turan/Grid/Cylinder/Q_d models), results/research/turan-grid-hadwiger-report.md |
 
 ## Decisions log
 
