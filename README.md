@@ -4,6 +4,23 @@ Graph-theoretic discovery and formal verification laboratory: an exact
 enumeration/counterexample engine (Rust), a Python control plane, and a
 Lean 4 / Mathlib proof pipeline with a kernel-checked witness bridge.
 
+[![CI](https://github.com/Hardonian/GRAPH-Lab/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hardonian/GRAPH-Lab/actions/workflows/ci.yml)
+[![Rust](https://img.shields.io/badge/Rust-computational_core-orange?logo=rust)](https://www.rust-lang.org/)
+[![Lean 4](https://img.shields.io/badge/Lean_4-kernel_checked-111827)](https://lean-lang.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+> **Portfolio signal:** GRAPH-Lab demonstrates research-grade systems engineering across Rust, Python, Lean 4, exact arithmetic, counterexample search, and independently replayable verification artifacts.
+
+## Five-minute verification
+
+```bash
+git clone https://github.com/Hardonian/GRAPH-Lab.git
+cd GRAPH-Lab
+./scripts/verify.sh
+```
+
+The verification gate covers Rust formatting, tests, release checks, CLI diagnosis, Python quality checks, and Lean auditing. See [`docs/STATUS.md`](docs/STATUS.md) for the authoritative milestone ledger.
+
 ## Status
 
 `docs/STATUS.md` is the authoritative progress ledger; this README documents
